@@ -1,14 +1,14 @@
 # Neptune
 Fluid Springboard for iOS 12.
 
-**Fixed Issues**
+##Fixed Issues
 
 • Contol Centre is now accessible.
 
 • Modern status bar is now enabled.
 
 
-**Known Issues**
+##Known Issues
 
 • Cover Sheet displays clipped toggles at the bottom right and bottom left corners.
 
