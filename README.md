@@ -23,4 +23,4 @@ Requires iOS 12.0 or later. Compatible with iPhone 7 and 8, currently untested o
 
 - Not tested on iPhone 7 Plus, iPhone 8 Plus, and iPhone SE.
 
-Fixes planned for all of these issues.
+Fixes are planned for all of these issues. No eta at the moment.
