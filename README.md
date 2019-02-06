@@ -1,4 +1,3 @@
-###### Version 1.0
 # Neptune
 Fluid Springboard for iOS 12.
 
@@ -20,3 +19,5 @@ Fluid Springboard for iOS 12.
 - Not tested on iPhone 7 Plus and iPhone 8 Plus, may not work on these devices.
 
 There are fixes planned for all of these issues, no eta.
+
+###### Version 1.0
