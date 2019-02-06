@@ -8,7 +8,7 @@ Requires iOS 12.0 or later. Compatible with iPhone 7 and 8, currently untested o
 
 ## Fixed Issues
 
-- Contol Centre is now accessible.
+- Contol Center is now accessible.
 
 - Modern status bar is now enabled.
 
