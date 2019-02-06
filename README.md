@@ -1,4 +1,5 @@
-# Neptune ###### Version 1.0
+###### Version 1.0
+# Neptune
 Fluid Springboard for iOS 12.
 
 ## Fixed Issues
