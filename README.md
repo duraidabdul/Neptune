@@ -7,6 +7,7 @@ Fluid Springboard for iOS 12.
 
 • Modern status bar is now enabled.
 
+
 **Known Issues**
 
 • Cover Sheet displays clipped toggles at the bottom right and bottom left corners.
