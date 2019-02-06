@@ -1,6 +1,6 @@
 ---
 name: Bug Report
-about: Create a report to help me improve the tweak.
+about: Create a report to help improve this tweak.
 title: ''
 labels: ''
 assignees: ''
