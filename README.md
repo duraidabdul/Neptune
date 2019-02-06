@@ -2,11 +2,13 @@
 Fluid Springboard for iOS 12.
 
 ###### Version
-1.0 beta 1
+1.0 beta 1-2
 ###### Compatibility
 Requires iOS 12.0 or later. Compatible with iPhone 7 and 8, currently untested on other devices.
 
 ## Fixed Issues
+
+- Cover sheet toggles no longer display until a solution for clipping is found.
 
 - Contol Center is now accessible.
 
@@ -14,8 +16,6 @@ Requires iOS 12.0 or later. Compatible with iPhone 7 and 8, currently untested o
 
 
 ## Known Issues
-
-- Cover Sheet displays clipped toggles at the bottom right and bottom left corners.
 
 - Home indicator overlaps Tab Bar labels in applications.
 
