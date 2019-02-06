@@ -1,13 +1,12 @@
 # Neptune
-###### Version
-12
+###### Version 1.0
 Fluid Springboard for iOS 12.
 
 ## Fixed Issues
 
-• Contol Centre is now accessible.
+- Contol Centre is now accessible.
 
-• Modern status bar is now enabled.
+- Modern status bar is now enabled.
 
 
 ## Known Issues
