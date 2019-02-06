@@ -1,7 +1,8 @@
 # Neptune
 Fluid Springboard for iOS 12.
 
-###### Version 1.0
+###### Version
+1.0 beta 1
 ###### Compatibility
 Requires iOS 12.0 or later. Compatible with iPhone 7 and 8, currently untested on other devices.
 
