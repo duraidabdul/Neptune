@@ -2,6 +2,8 @@
 Fluid Springboard for iOS 12.
 
 ###### Version 1.0
+###### Compatibility
+Requires iOS 12.0 or later. Compatible with iPhone 7 and 8, currently untested on other devices.
 
 ## Fixed Issues
 
@@ -18,6 +20,6 @@ Fluid Springboard for iOS 12.
 
 - App switcher cards have no corner radius while the app switcher is being accessed.
 
-- Not tested on iPhone 7 Plus and iPhone 8 Plus, may not work on these devices.
+- Not tested on iPhone 7 Plus, iPhone 8 Plus, and iPhone SE.
 
 Fixes planned for all of these issues.
