@@ -1,10 +1,6 @@
 # Neptune
 Fluid Springboard for iOS 12.
 
-###### Version 1.0
-###### Compatibility
-Requires iOS 12.0 or later. Compatible with iPhone 7 and 8, currently untested on other devices.
-
 ## Fixed Issues
 
 - Contol Centre is now accessible.
@@ -23,3 +19,7 @@ Requires iOS 12.0 or later. Compatible with iPhone 7 and 8, currently untested o
 - Not tested on iPhone 7 Plus, iPhone 8 Plus, and iPhone SE.
 
 Fixes planned for all of these issues.
+
+###### Version 1.0
+###### Compatibility
+Requires iOS 12.0 or later. Compatible with iPhone 7 and 8, currently untested on other devices.
