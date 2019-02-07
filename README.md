@@ -1,8 +1,7 @@
-**Currently Down**
-The tweak is not available at the moment.
-
 # Neptune
 Fluid Springboard for iOS 12.
+
+**Credits**: MidnightChips (HomeGesture)
 
 ###### Version
 1.0 beta 1 (revised)
