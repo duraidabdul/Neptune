@@ -15,7 +15,7 @@ long _homeButtonType = 1;
 %end
 
 %hook SBHomeHardwareButtonActions
-- (id)initWitHomeButtonType:(long long)arg1 {
+- (id)initWithHomeButtonType:(long long)arg1 {
     return %orig(_homeButtonType);
 }
 %end
