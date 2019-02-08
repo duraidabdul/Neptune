@@ -1,7 +1,7 @@
 # Neptune
 Fluid Springboard for iOS 12.
 
-**Credits**: MidnightChips (HomeGesture)
+**Credits**: MidnightChips (Developer of [HomeGesture](https://github.com/midnightchip/midnightchip.github.io))
 
 ###### Version
 1.0 beta 2
