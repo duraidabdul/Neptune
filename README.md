@@ -28,4 +28,8 @@ Requires iOS 12.0 or later. Compatible with iPhone 7 and 8, currently untested o
 
 - Not tested on iPhone 7 Plus, iPhone 8 Plus, and iPhone SE.
 
+- Cover sheet torch and camera toggles are currently disabled until I manage to get them fixed.
+
 Fixes are planned for all of these issues. No eta at the moment.
+
+Planned features include dynamic switcher corner radius, preferences for toggling dock & status bar and more!
