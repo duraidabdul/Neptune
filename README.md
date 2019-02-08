@@ -4,24 +4,27 @@ Fluid Springboard for iOS 12.
 **Credits**: MidnightChips (HomeGesture)
 
 ###### Version
-1.0 beta 1 (revised)
+1.0 beta 2
 ###### Compatibility
 Requires iOS 12.0 or later. Compatible with iPhone 7 and 8, currently untested on other devices.
 
+## New Features
+
+- Rounded dock is now enabled!
+
+- Screen corners are now rounded (same as the way the iPhone X rounds legacy apps)
+
+- Screenshot preview now displays rounded corner style (Credits: MidnightChips)
+
 ## Fixed Issues
 
-- Cover sheet toggles no longer display until a solution for clipping is found.
+- Switcher card corner radius now displays correctly when accessing app switcher via gesture.
 
-- Contol Center is now accessible.
-
-- Modern status bar is now enabled.
-
+- Screenshot buttons are now remapped to their original position (Credits: MidnightChips)
 
 ## Known Issues
 
-- Home indicator overlaps Tab Bar labels in applications.
-
-- App switcher cards have no corner radius while the app switcher is being accessed.
+- Home indicator overlaps Tab Bar labels in applications if enabled.
 
 - Not tested on iPhone 7 Plus, iPhone 8 Plus, and iPhone SE.
 
