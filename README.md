@@ -14,13 +14,13 @@ Requires iOS 12.0 or later. Compatible with iPhone 7 and 8, currently untested o
 
 - Screen corners are now rounded (same as the way the iPhone X rounds legacy apps).
 
-- Screenshot preview now displays rounded corner style. _Credits: MidnightChips
+- Screenshot preview now displays rounded corner style. _Credits: MidnightChips_
 
 ## Fixed Issues
 
 - Switcher card corner radius now displays correctly when accessing app switcher via gesture.
 
-- Screenshot buttons are now remapped to their original position. _Credits: MidnightChips
+- Screenshot buttons are now remapped to their original position. _Credits: MidnightChips_
 
 ## Known Issues
 
