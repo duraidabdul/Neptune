@@ -12,15 +12,15 @@ Requires iOS 12.0 or later. Compatible with iPhone 7 and 8, currently untested o
 
 - Rounded dock is now enabled!
 
-- Screen corners are now rounded (same as the way the iPhone X rounds legacy apps)
+- Screen corners are now rounded (same as the way the iPhone X rounds legacy apps).
 
-- Screenshot preview now displays rounded corner style (Credits: MidnightChips)
+- Screenshot preview now displays rounded corner style. _Credits: MidnightChips
 
 ## Fixed Issues
 
 - Switcher card corner radius now displays correctly when accessing app switcher via gesture.
 
-- Screenshot buttons are now remapped to their original position (Credits: MidnightChips)
+- Screenshot buttons are now remapped to their original position. _Credits: MidnightChips
 
 ## Known Issues
 
