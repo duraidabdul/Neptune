@@ -1,3 +1,6 @@
+#import <UIKit/UIKit.h>
+#import <objc/runtime.h>
+
 long _homeButtonType = 1;
 
 // Enable Fluid App Switcher.
@@ -86,20 +89,18 @@ int applicationDidFinishLaunching;
 }
 %end
 
-@interface SBDashBoardQuickActionsButton : UIView
-@end
-
- %hook SBDashBoardQuickActionsButton
+ %hook MediaControlsRoutingButtonPackageView
  - (id)init {
  return NULL;
  }
- - (id)initWithType:(long long)arg1 {
- return NULL;
- }
- - (id)_imageWithName:(id)arg1 {
- return NULL;
- }
  %end
+
+%hook SBDeckSwitcherPersonality
+- (CGFloat)_cardCornerRadiusInAppSwitcher {
+    CGFloat orig = 10;
+    return orig;
+}
+%end
 
 @interface SBAppSwitcherPageView : UIView
 @property(nonatomic, assign) double cornerRadius;
@@ -107,6 +108,72 @@ int applicationDidFinishLaunching;
 @property(nonatomic) double shadowAlpha;
 - (void)_updateCornerRadius;
 @end
+
+%hook SBAppSwitcherPageView
+/*- (void)_updateCornerRadius {*/
+/*
+ if (!self.blocksTouches || self.shadowAlpha == 0) {
+ self.cornerRadius = 0;
+ } else if (self.blocksTouches || self.shadowAlpha != 0) {
+ self.cornerRadius = 22;
+ }*/
+//self.cornerRadius = 5;
+/*
+ [UIView animateWithDuration:0.25 delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+ %orig;
+ } completion:NULL];
+ return;
+ }*/
+/*
+ - (void)viewDismissing:(id)arg1 forTransitionRequest:(id)arg2 {
+ %orig;
+ //self.cornerRadius = 5;
+ [self _updateCornerRadius];
+ return;
+ }
+ - (void)viewPresenting:(id)arg1 forTransitionRequest:(id)arg2 {
+ %orig;
+ //self.cornerRadius = 22;
+ [self _updateCornerRadius];
+ return;
+ }
+
+ - (void)_updateShadow {
+ %orig;
+ [self _updateCornerRadius];
+ return;
+ }
+ - (void)setActive:(_Bool)arg1 {
+ %orig;
+ [self _updateCornerRadius];
+ return;
+ }
+ - (void)layoutSubviews {
+ %orig;
+ [self _updateCornerRadius];
+ return;
+ }
+ - (void)setVisible:(_Bool)arg1 {
+ %orig;
+ [self _updateCornerRadius];
+ return;
+ }*/
+%end
+
+@interface _UIRootWindow : UIView
+@property (setter=_setContinuousCornerRadius:, nonatomic) double _continuousCornerRadius;
+- (double)_continuousCornerRadius;
+- (void)_setContinuousCornerRadius:(double)arg1;
+@end
+
+%hook _UIRootWindow
+- (void)layoutSubviews {
+    %orig;
+    self._continuousCornerRadius = 5;
+    self.clipsToBounds = YES;
+    return;
+}
+%end
 
 // Round Screenshot Preview
 %hook UITraitCollection
@@ -120,47 +187,35 @@ int applicationDidFinishLaunching;
 }
 %end
 
-%hook SBAppSwitcherPageView
-- (void)_updateCornerRadius {
-    self.cornerRadius = 5;
-    [UIView animateWithDuration:0.25 delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
-        %orig;
-    } completion:NULL];
-    return;
-}
+@interface UIView (SpringBoardAdditions)
+- (void)sb_removeAllSubviews;
+@end
 
-- (void)viewDismissing:(id)arg1 forTransitionRequest:(id)arg2 {
-    %orig;
-    //self.cornerRadius = 0;
-    [self _updateCornerRadius];
-    return;
-}
-- (void)viewPresenting:(id)arg1 forTransitionRequest:(id)arg2 {
-    %orig;
-    //self.cornerRadius = 22;
-    [self _updateCornerRadius];
-    return;
-}
+@interface SBDashBoardQuickActionsView : UIView
+@end
 
-- (void)_updateShadow {
+%hook SBDashBoardQuickActionsView
+- (void)_layoutQuickActionButtons {
     %orig;
-    [self _updateCornerRadius];
-    return;
-}
-- (void)setActive:(_Bool)arg1 {
-    %orig;
-    [self _updateCornerRadius];
-    return;
-}
-- (void)layoutSubviews {
-    %orig;
-    [self _updateCornerRadius];
-    return;
-}
-- (void)setVisible:(_Bool)arg1 {
-    %orig;
-    [self _updateCornerRadius];
-    return;
+    for (UIView *subview in self.subviews) {
+        if (subview.frame.size.width < 50) {
+            if (subview.frame.origin.x < 50) {
+                CGRect _frame = subview.frame;
+                _frame = CGRectMake(46, _frame.origin.y - 100, 50, 50);
+                subview.frame = _frame;
+                [subview sb_removeAllSubviews];
+                [subview init];
+            }
+            if (subview.frame.origin.x > 100) {
+                CGFloat _screenWidth = subview.frame.origin.x + subview.frame.size.width / 2;
+                CGRect _frame = subview.frame;
+                _frame = CGRectMake(_screenWidth - 96, _frame.origin.y - 100, 50, 50);
+                subview.frame = _frame;
+                [subview sb_removeAllSubviews];
+                [subview init];
+            }
+        }
+    }
 }
 %end
 
