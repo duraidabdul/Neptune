@@ -1,16 +1,16 @@
 # Neptune
 Fluid Springboard for iOS 12.
 
-**Credits**: MidnightChips (Developer of [HomeGesture](https://github.com/midnightchip/midnightchip.github.io))
+**Credits**: This is a fork of [HomeGesture](https://github.com/midnightchip/midnightchip.github.io)), developed by the incredibly talented MidnightChips!
 
 ###### Version
 1.0 beta 3
 ###### Compatibility
-Requires iOS 12.0 or later. Compatible with iPhone 7 and 8, currently untested on other devices.
+Requires iOS 12.0 or later. Made for iPhone.
 
 ## New Features
 
-- Lock screen quick toggles now display! On devices without 3D Touch, you can simply tap and hold to enable.
+- Lock screen quick toggles are now enabled, and fully functional! On devices without 3D Touch, you can simply tap and hold to enable. :)
 
 - Screen corners are now rounded system wide (same anti-aliasing method that the iPhone X uses to round corners).
 
@@ -34,6 +34,4 @@ Requires iOS 12.0 or later. Compatible with iPhone 7 and 8, currently untested o
 
 Fixes are planned for all of these issues. No eta at the moment.
 
-A preference pane is in the works, so I can offer the option to change the screenshot buttons and toggle the dock, home indicator and lock screen buttons. No eta. I am not expecting to have this done very soon, I have exams coming up :( In the meantime, there will be two alternate packages up to use the volume up + side button for screenshots.
-
-
+A preference pane is in the works, so that I can offer the option to change the screenshot buttons and toggle the dock, home indicator and lock screen buttons. No eta. I am not expecting to have this done very soon, as I have exams coming up. In the meantime, there will be two alternate packages up to use the volume up + side button for screenshots.
