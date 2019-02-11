@@ -16,23 +16,29 @@ Fluid Springboard for iOS 12.
 **Credits**: This is a fork of [HomeGesture](https://github.com/midnightchip/midnightchip.github.io)), developed by the incredibly talented MidnightChips!
 
 ###### Version
-1.0 beta 3
+1.0 beta 4
 ###### Compatibility
 Requires iOS 12.0 or later. Made for iPhone.
 
+## Important Notes
+
+- To take a screenshot, press the **power and volume up** buttons simultaneously.
+
+- To access Siri, press and hold the **power** button.
+
+- To shut down, press and hold the **power and volume down** buttons simulataneously.
+
 ## New Features
 
-- Lock screen quick toggles are now enabled, and fully functional! On devices without 3D Touch, you can simply tap and hold to enable. :)
+- Lock screen control center grabber is now enabled!
 
-- Screen corners are now rounded system wide (same anti-aliasing method that the iPhone X uses to round corners).
-
-- An even smoother corner radius animation when entering the app switcher.
+- Home screen app icons now fade out nicely when being deselected.
 
 ## Fixed Issues
 
-- A switcher snapshot corner radius override was causing corners to render incorrectly when exiting apps from the switcher to the home screen. This is now fixed.
+- Fixed critical bug that caused Springboard to hang when Spotlight was accessed.
 
-- Some other minor bug visual glitches fixed.
+- Reworked corner radius rendering to avoid CPU overload, also invoked by the Spotlight bug.
 
 ## Known Issues
 
@@ -40,10 +46,12 @@ Requires iOS 12.0 or later. Made for iPhone.
 
 **Workaround:** Use the version of Neptune that does not include the home indicator.
 
-- The dock is not sized properly on the iPhone SE. This will be fixed in a future update. (Likely in a revised version of beta 3)
+- Status bar does not transition properly in applications. This issue cannot be fixed until rootlessJB3 offers access to applications. Please don't bother the developer of rootlessJB3, as it won't accelerate the developement process.
 
-- Beta 3 has not been tested on iPhone 7 Plus, iPhone 8 Plus, and iPhone SE.
+- The dock is not sized properly on the iPhone SE. This will be fixed in a future update. (Likely in a revised version of beta 4)
 
-Fixes are planned for all of these issues. No eta at the moment.
+- Beta 4 has not been tested on iPhone 7 Plus, iPhone 8 Plus, and iPhone SE, and may have minor visual bugs.
+
+Fixes are planned for all of these issues. No eta at the moment. If you find any issues, please report them in the "Issues" section, so that i can label them and track them!
 
 A preference pane is in the works, so that I can offer the option to change the screenshot buttons and toggle the dock, home indicator and lock screen buttons. No eta. I am not expecting to have this done very soon, as I have exams coming up. In the meantime, there will be two alternate packages up to use the volume up + side button for screenshots.
