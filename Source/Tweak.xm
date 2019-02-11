@@ -3,25 +3,26 @@
 
 long _homeButtonType = 1;
 
-// Enable Fluid App Switcher.
+// MARK: - Enable fluid behavior
+
+// Enable fluid app switcher support.
 %hook BSPlatform
 - (NSInteger)homeButtonType {
     return 2;
 }
 %end
 
-// Restore button to invoke Siri.
-%hook SBLockHardwareButtonActions
-- (id)initWithHomeButtonType:(long long)arg1 proximitySensorManager:(id)arg2 {
-    return %orig(_homeButtonType, arg2);
+// Enable PIP support.
+%hook SBPIPController
++ (BOOL)isPictureInPictureSupported {
+    return YES;
+}
++ (BOOL)isAutoPictureInPictureSupported {
+    return YES;
 }
 %end
 
-%hook SBHomeHardwareButtonActions
-- (id)initWithHomeButtonType:(long long)arg1 {
-    return %orig(_homeButtonType);
-}
-%end
+// MARK: - Modern status bar implementation
 
 %hook _UIStatusBarVisualProvider_iOS
 + (Class)class {
@@ -48,7 +49,8 @@ long _homeButtonType = 1;
 }
 %end
 
-// Disable Gestures (SpringBoard applicationDidFinishLaunching also used in Screenshot Remap!)
+// MARK: - Screenshot remap
+/*
 int applicationDidFinishLaunching;
 
 %hook SpringBoard
@@ -58,7 +60,6 @@ int applicationDidFinishLaunching;
 }
 %end
 
-// Screenshot Remap
 %hook SBPressGestureRecognizer
 - (void)setAllowedPressTypes:(NSArray *)arg1 {
     NSArray * lockHome = @[@104, @101];
@@ -80,6 +81,7 @@ int applicationDidFinishLaunching;
     %orig;
 }
 %end
+
 %hook SBHomeHardwareButton
 - (id)initWithScreenshotGestureRecognizer:(id)arg1 homeButtonType:(long long)arg2 buttonActions:(id)arg3 gestureRecognizerConfiguration:(id)arg4 {
     return %orig(arg1, _homeButtonType, arg3, arg4);
@@ -89,53 +91,31 @@ int applicationDidFinishLaunching;
 }
 %end
 
+// MARK: - Siri remap
+
+%hook SBLockHardwareButtonActions
+- (id)initWithHomeButtonType:(long long)arg1 proximitySensorManager:(id)arg2 {
+    return %orig(_homeButtonType, arg2);
+}
+%end
+
+%hook SBHomeHardwareButtonActions
+- (id)initWithHomeButtonType:(long long)arg1 {
+    return %orig(_homeButtonType);
+}
+%end
+*/
+/* Implement iOS 12.2 media control button animation.
  %hook MediaControlsRoutingButtonPackageView
  - (id)init {
  return NULL;
  }
  %end
+ */
 
-%hook SBDeckSwitcherPersonality
-- (CGFloat)_cardCornerRadiusInAppSwitcher {
-    CGFloat orig = 10;
-    return orig;
-}
-%end
+// MARK: - Lock screen quick action toggle implementation
 
-@interface SBAppSwitcherPageView : UIView
-@property(nonatomic, assign) double cornerRadius;
-@property(nonatomic) _Bool blocksTouches;
-@property(nonatomic) double shadowAlpha;
-- (void)_updateCornerRadius;
-@end
-
-@interface _UIRootWindow : UIView
-@property (setter=_setContinuousCornerRadius:, nonatomic) double _continuousCornerRadius;
-- (double)_continuousCornerRadius;
-- (void)_setContinuousCornerRadius:(double)arg1;
-@end
-
-%hook _UIRootWindow
-- (void)layoutSubviews {
-    %orig;
-    self._continuousCornerRadius = 5;
-    self.clipsToBounds = YES;
-    return;
-}
-%end
-
-// Round Screenshot Preview
-%hook UITraitCollection
-+ (id)traitCollectionWithDisplayCornerRadius:(CGFloat)arg1 {
-    return %orig(22);
-}
-
-// Round Dock, Switcher Transition View, and Reachability
-- (CGFloat)displayCornerRadius {
-    return 5;
-}
-%end
-
+// Define custom springboard method to remove all subviews.
 @interface UIView (SpringBoardAdditions)
 - (void)sb_removeAllSubviews;
 @end
@@ -143,6 +123,7 @@ int applicationDidFinishLaunching;
 @interface SBDashBoardQuickActionsView : UIView
 @end
 
+// Reinitialize quick action toggles
 %hook SBDashBoardQuickActionsView
 - (void)_layoutQuickActionButtons {
     %orig;
@@ -150,7 +131,7 @@ int applicationDidFinishLaunching;
         if (subview.frame.size.width < 50) {
             if (subview.frame.origin.x < 50) {
                 CGRect _frame = subview.frame;
-                _frame = CGRectMake(46, _frame.origin.y - 100, 50, 50);
+                _frame = CGRectMake(46, _frame.origin.y - 90, 50, 50);
                 subview.frame = _frame;
                 [subview sb_removeAllSubviews];
                 [subview init];
@@ -158,7 +139,7 @@ int applicationDidFinishLaunching;
             if (subview.frame.origin.x > 100) {
                 CGFloat _screenWidth = subview.frame.origin.x + subview.frame.size.width / 2;
                 CGRect _frame = subview.frame;
-                _frame = CGRectMake(_screenWidth - 96, _frame.origin.y - 100, 50, 50);
+                _frame = CGRectMake(_screenWidth - 96, _frame.origin.y - 90, 50, 50);
                 subview.frame = _frame;
                 [subview sb_removeAllSubviews];
                 [subview init];
@@ -168,12 +149,99 @@ int applicationDidFinishLaunching;
 }
 %end
 
-// Hide HomeBar
-@interface MTLumaDodgePillView : UIView
+// MARK: - Cover sheet control centre grabber initialization
+
+@interface SBDashBoardTeachableMomentsContainerView : UIView
+@property(retain, nonatomic) UIView *controlCenterGrabberView;
+@property(retain, nonatomic) UIView *controlCenterGrabberEffectContainerView;
 @end
 
-%hook MTLumaDodgePillView
-- (id)initWithFrame:(struct CGRect)arg1 {
-	return NULL;
+%hook SBDashBoardTeachableMomentsContainerView
+- (void)layoutSubviews {
+    %orig;
+
+    self.controlCenterGrabberEffectContainerView.frame = CGRectMake(self.frame.size.width - 73,36,46,2.5);
+    self.controlCenterGrabberView.frame = CGRectMake(0,0,46,2.5);
+}
+%end
+
+// MARK: - Corner radius implementation
+
+@interface _UIRootWindow : UIView
+@property (setter=_setContinuousCornerRadius:, nonatomic) double _continuousCornerRadius;
+- (double)_continuousCornerRadius;
+- (void)_setContinuousCornerRadius:(double)arg1;
+@end
+
+// Implement system wide continuousCorners.
+%hook _UIRootWindow
+- (void)layoutSubviews {
+    %orig;
+    self._continuousCornerRadius = 5;
+    self.clipsToBounds = YES;
+    return;
+}
+%end
+
+// Implement corner radius adjustment for when in the app switcher scroll view.
+%hook SBDeckSwitcherPersonality
+- (CGFloat)_cardCornerRadiusInAppSwitcher {
+    CGFloat orig = 10;
+    return orig;
+}
+%end
+
+// Implement round screenshot preview edge insets.
+%hook UITraitCollection
++ (id)traitCollectionWithDisplayCornerRadius:(CGFloat)arg1 {
+    return %orig(20);
+}
+%end
+
+@interface SBAppSwitcherPageView : UIView
+@property(nonatomic, assign) double cornerRadius;
+@end
+
+// Override rendered corner radius in app switcher page, (for anytime the fluid switcher gestures are running).
+%hook SBAppSwitcherPageView
+- (void)_updateCornerRadius {
+    if (self.cornerRadius == 20) {
+        self.cornerRadius = 5;
+    }
+    %orig;
+    return;
+}
+%end
+
+// Override Reachability corner radius.
+%hook SBReachabilityBackgroundView
+- (double)_displayCornerRadius {
+    return 5;
+}
+%end
+
+// MARK: - App icon selection override
+
+@interface SBIconView : UIView
+- (void)setHighlighted:(bool)arg1;
+@end
+
+%hook SBIconView
+- (void)setHighlighted:(bool)arg1 {
+
+    if (arg1 == YES) {
+        [UIView animateWithDuration:0
+                              delay:0
+                            options:UIViewAnimationOptionCurveEaseInOut
+                         animations:^{%orig;}
+                         completion:^(BOOL finished){ }];
+    } else {
+        [UIView animateWithDuration:0.15
+                              delay:0
+                            options:UIViewAnimationOptionCurveEaseInOut
+                         animations:^{%orig;}
+                         completion:^(BOOL finished){ }];
+    }
+    return;
 }
 %end
