@@ -54,4 +54,4 @@ Requires iOS 12.0 or later. Made for iPhone.
 
 Fixes are planned for all of these issues. No eta at the moment. If you find any issues, please report them in the "Issues" section, so that i can label them and track them!
 
-A preference pane is in the works, so that I can offer the option to change the screenshot buttons and toggle the dock, home indicator and lock screen buttons. No eta. I am not expecting to have this done very soon, as I have exams coming up. In the meantime, there will be two alternate packages up to use the volume up + side button for screenshots.
+A preference pane is in the works, so that I can offer the option to change the screenshot buttons and toggle the dock, home indicator and lock screen buttons. No eta. I am not expecting to have this done very soon, as I have exams coming up. In the meantime, there will be an alternate package up to disable the home indicator.
