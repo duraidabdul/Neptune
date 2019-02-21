@@ -88,19 +88,6 @@ long _homeButtonType = 1;
 }
 %end
 
-// MARK: Enable PIP support
-/*
-%hook SBPIPController
-+ (BOOL)isPictureInPictureSupported {
-return YES;
-}
-+ (BOOL)isAutoPictureInPictureSupported {
-return YES;
-}
-%end
-*/
-
-
 // MARK: Control Center media controls transition (from iOS 12.2 beta)
 
 @interface MediaControlsRoutingButtonView : UIView
