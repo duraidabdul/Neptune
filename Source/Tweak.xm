@@ -339,7 +339,7 @@ static CALayer* AirPlayIcon;
 
 
 
-
+%group KeyboardDock
 
 %hook UIRemoteKeyboardWindowHosted
 - (UIEdgeInsets)safeAreaInsets {
@@ -365,16 +365,25 @@ static CALayer* AirPlayIcon;
 
 - (CGRect)bounds {
     CGRect bounds = %orig;
-    bounds.origin.y -=7.5;
+    if (bounds.origin.y == 0) {
+      bounds.origin.y -=12.5;
+    }
     return bounds;
 }
 
+- (void)layoutSubviews {
+    %orig;
+}
+
 %end
+
 
 %hook UIInputWindowController
 - (UIEdgeInsets)_viewSafeAreaInsetsFromScene {
     return UIEdgeInsetsMake(0,0,44,0);
 }
+%end
+
 %end
 
 // MARK: - Modern status bar implementation
@@ -440,6 +449,21 @@ static CALayer* AirPlayIcon;
 %group TabBarSizing
 
 // MARK: - Inset behavior modifications
+
+/*
+ %hook UIWindow
+ - (UIEdgeInsets)safeAreaInsets {
+ UIEdgeInsets orig = %orig;
+ orig.bottom = 21;
+ return orig;
+ }
+ - (UIEdgeInsets)_inferredLayoutMargins {
+ UIEdgeInsets orig = %orig;
+ orig.bottom = 21;
+ return orig;
+ }
+ %end
+ */
 
 %hook UITabBar
 
@@ -545,9 +569,14 @@ static void respring(CFNotificationCenterRef center, void *observer, CFStringRef
     BOOL forcedSystemWideStatusBar = [[currentSettings objectForKey:@"forcedSystemWideStatusBar"] boolValue];
     BOOL isHomeIndicatorEnabled = [[currentSettings objectForKey:@"isHomeIndicatorEnabled"] boolValue];
     BOOL isButtonCombinationOverrideDisabled = [[currentSettings objectForKey:@"isButtonCombinationOverrideDisabled"] boolValue];
+    BOOL isTallKeyboardEnabled = [[currentSettings objectForKey:@"isTallKeyboardEnabled"] boolValue];
 
     if ([bundleIdentifier isEqualToString:@"com.apple.springboard"]) {
         %init(SpringBoardModifications);
+    }
+
+    if (isTallKeyboardEnabled) {
+      %init(KeyboardDock);
     }
 
     // Inset adjustment initialization
