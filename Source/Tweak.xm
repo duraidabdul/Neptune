@@ -1007,7 +1007,7 @@ static void respring(CFNotificationCenterRef center, void *observer, CFStringRef
     }
 
     // Wallet
-    if ([bundleIdentifier containsString:@"Passbook"]) {
+    if ([bundleIdentifier containsString:@"Passbook--ALPHA"]) {
         %init(Wallet122UI);
     }
 
