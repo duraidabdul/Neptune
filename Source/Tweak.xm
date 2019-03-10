@@ -784,7 +784,7 @@ float _bottomInset = 21;
     %orig;
     CGRect _frame = self.frame;
     if (_frame.origin.y != [[UIScreen mainScreen] bounds].size.height - _frame.size.height) {
-        _frame.origin.y = _frame.origin.y - 3.5;
+        _frame.origin.y -= 3.5;
     }
     self.frame = _frame;
 }
@@ -875,7 +875,7 @@ extern "C" Boolean MGGetBoolAnswer(CFStringRef);
             self.layer.cornerRadius = 10;
             self.clipsToBounds = YES;
 
-            _frame.size.width = _frame.size.width - 32;
+            _frame.size.width -= 32;
             _frame.origin.x = 16;
             self.frame = _frame;
 
@@ -927,9 +927,9 @@ extern "C" Boolean MGGetBoolAnswer(CFStringRef);
         if (self.frame.origin.x == 0) {
             CGRect _frame = self.frame;
             //if (_frame.size.width > 200) {
-            _frame.size.width = _frame.size.width - 10;
+            _frame.size.width -= 10;
             //}
-            _frame.origin.x = _frame.origin.x + 5;
+            _frame.origin.x += 5;
             self.frame = _frame;
         }
     }
@@ -1005,20 +1005,13 @@ extern "C" Boolean MGGetBoolAnswer(CFStringRef);
         %init(HideLuma);
     }
 
-    BOOL isStatusBarEnabled = false;
+    %init(StatusBarProvider);
 
     for (NSString *identifier in acceptedStatusBarIdentifiers) {
-        if ([bundleIdentifier containsString:identifier]) {
-            isStatusBarEnabled = true;
+        if ((statusBarStyle == 0 && [bundleIdentifier containsString:identifier]) || statusBarStyle == 1) {
+            %init(StatusBarModern);
         }
     }
-
-    %init(StatusBarProvider)
-
-    if (isStatusBarEnabled || statusBarStyle == 1) {
-        %init(StatusBarModern)
-    }
-
 
     // Conditional inset adjustment initialization
     NSArray *acceptedInsetAdjustmentIdentifiers = @[@"com.apple",
