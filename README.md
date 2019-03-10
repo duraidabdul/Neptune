@@ -18,7 +18,7 @@ Fluid Springboard for iOS 12.
 **Acknowledgments**: This is a fork of [HomeGesture](https://github.com/midnightchip/midnightchip.github.io), developed by the incredibly talented MidnightChips!
 
 ###### Version
-1.0 beta 6
+1.0 beta 7
 ###### Compatibility
 Requires iOS 12.0 or later. Made for iPhone.
 
