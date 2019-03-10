@@ -605,13 +605,11 @@ int _controlCenterStatusBarInset = -10;
 + (Class)class {
     if (statusBarStyle == 0) {
         return NSClassFromString(@"_UIStatusBarVisualProvider_Split58");
-    } else if (statusBarStyle == 1) {
+    } else {
         if (@available(iOS 12.1, *)) {
             return NSClassFromString(@"_UIStatusBarVisualProvider_RoundedPad_ForcedCellular");
         }
         return NSClassFromString(@"_UIStatusBarVisualProvider_Pad_ForcedCellular");
-    } else {
-        return %orig;
     }
 }
 %end
@@ -632,27 +630,23 @@ int _controlCenterStatusBarInset = -10;
 }
 %end
 
+%end
+
+
+%group StatusBarModern
+
 %hook UIStatusBarWindow
 + (void)setStatusBar:(Class)arg1 {
-    if (statusBarStyle != 2) {
-        return %orig(NSClassFromString(@"UIStatusBar_Modern"));
-    }
-    %orig;
+    return %orig(NSClassFromString(@"UIStatusBar_Modern"));
 }
 %end
 
 %hook UIStatusBar_Base
 + (Class)_implementationClass {
-    if (statusBarStyle != 2) {
-        return NSClassFromString(@"UIStatusBar_Modern");
-    }
-    return %orig;
+    return NSClassFromString(@"UIStatusBar_Modern");
 }
 + (void)_setImplementationClass:(Class)arg1 {
-    if (statusBarStyle != 2) {
-        return %orig(NSClassFromString(@"UIStatusBar_Modern"));
-    }
-    %orig;
+    return %orig(NSClassFromString(@"UIStatusBar_Modern"));
 }
 %end
 
@@ -1019,8 +1013,10 @@ extern "C" Boolean MGGetBoolAnswer(CFStringRef);
         }
     }
 
-    if (isStatusBarEnabled) {
-        %init(StatusBarProvider)
+    %init(StatusBarProvider)
+
+    if (isStatusBarEnabled || statusBarStyle == 1) {
+        %init(StatusBarModern)
     }
 
 
