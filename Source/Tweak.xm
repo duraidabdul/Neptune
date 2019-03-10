@@ -2,7 +2,13 @@
 #import <objc/runtime.h>
 
 long _homeButtonType = 1;
+BOOL isHomeIndicatorEnabled = YES;
+BOOL isButtonCombinationOverrideDisabled = NO;
+BOOL isTallKeyboardEnabled = YES;
+BOOL isPIPEnabled = NO;
+int  statusBarStyle = 1;
 
+long isPrototypingEnabled = NO;
 
 @interface CALayer (CornerAddition)
 -(bool)continuousCorners;
@@ -11,29 +17,27 @@ long _homeButtonType = 1;
 @end
 
 
-
 // MARK: - Button remap
-
 %group ButtonRemap
 
 // Press Home Button for Siri
 %hook SBLockHardwareButtonActions
 - (id)initWithHomeButtonType:(long long)arg1 proximitySensorManager:(id)arg2 {
-		return %orig(_homeButtonType, arg2);
+    return %orig(_homeButtonType, arg2);
 }
 %end
 %hook SBHomeHardwareButtonActions
 - (id)initWitHomeButtonType:(long long)arg1 {
-	return %orig(_homeButtonType);
+    return %orig(_homeButtonType);
 }
 %end
 
 %hook SBHomeHardwareButton
 - (id)initWithScreenshotGestureRecognizer:(id)arg1 homeButtonType:(long long)arg2 buttonActions:(id)arg3 gestureRecognizerConfiguration:(id)arg4 {
-	return %orig(arg1, _homeButtonType, arg3, arg4);
+    return %orig(arg1, _homeButtonType, arg3, arg4);
 }
 - (id)initWithScreenshotGestureRecognizer:(id)arg1 homeButtonType:(long long)arg2 {
-  return %orig(arg1, _homeButtonType);
+    return %orig(arg1, _homeButtonType);
 }
 %end
 
@@ -75,7 +79,7 @@ static CALayer* platterLayer;
 
                 playbackIcon = self.layer.sublayers[0].sublayers[0].sublayers[1].sublayers[0];
                 AirPlayIcon = self.layer.sublayers[0].sublayers[0].sublayers[1].sublayers[1];
-								platterLayer = self.layer.sublayers[0].sublayers[0].sublayers[1];
+                platterLayer = self.layer.sublayers[0].sublayers[0].sublayers[1];
 
                 if (self.currentMode == 2) { // Play/Pause Mode
 
@@ -97,7 +101,7 @@ static CALayer* platterLayer;
                     }];
                     [animator2 startAnimation];
 
-										platterLayer.backgroundColor = [[UIColor colorWithRed:0 green:0.478 blue:1.0 alpha:0.0] CGColor];
+                    platterLayer.backgroundColor = [[UIColor colorWithRed:0 green:0.478 blue:1.0 alpha:0.0] CGColor];
 
                 } else if (self.currentMode == 0 || self.currentMode == 1) { // AirPlay Mode
 
@@ -115,14 +119,14 @@ static CALayer* platterLayer;
 
                     UIViewPropertyAnimator *animator2 = [[UIViewPropertyAnimator alloc] initWithDuration:1 dampingRatio:1 animations:^{
                         AirPlayIcon.transform = CATransform3DMakeScale(1, 1, 1);
-												if (self.currentMode == 0) {
-													AirPlayIcon.opacity = 0.75;
-													platterLayer.backgroundColor = [[UIColor colorWithRed:0 green:0.478 blue:1.0 alpha:0.0] CGColor];
-												} else if (self.currentMode == 1) {
-													AirPlayIcon.opacity = 1;
-													platterLayer.backgroundColor = [[UIColor colorWithRed:0 green:0.478 blue:1.0 alpha:1.0] CGColor];
-													platterLayer.cornerRadius = 18;
-												}
+                        if (self.currentMode == 0) {
+                            AirPlayIcon.opacity = 0.75;
+                            platterLayer.backgroundColor = [[UIColor colorWithRed:0 green:0.478 blue:1.0 alpha:0.0] CGColor];
+                        } else if (self.currentMode == 1) {
+                            AirPlayIcon.opacity = 1;
+                            platterLayer.backgroundColor = [[UIColor colorWithRed:0 green:0.478 blue:1.0 alpha:1.0] CGColor];
+                            platterLayer.cornerRadius = 18;
+                        }
                     }];
                     [animator2 startAnimation];
                 }
@@ -193,17 +197,17 @@ NEPStatusBarHeightStyle _statusBarHeightStyle = Tall;
     %orig;
 
     if (_statusBarHeightStyle == Tall) {
-      self.controlCenterGrabberEffectContainerView.frame = CGRectMake(self.frame.size.width - 73,36,46,2.5);
-      self.controlCenterGrabberView.frame = CGRectMake(0,0,46,2.5);
+        self.controlCenterGrabberEffectContainerView.frame = CGRectMake(self.frame.size.width - 73,36,46,2.5);
+        self.controlCenterGrabberView.frame = CGRectMake(0,0,46,2.5);
     } else if (@available(iOS 12.1, *)) {
-			// Rounded status bar visual provider
-			self.controlCenterGrabberEffectContainerView.frame = CGRectMake(self.frame.size.width - 85.5,26,60.5,2.5);
-	    self.controlCenterGrabberView.frame = CGRectMake(0,0,60.5,2.5);
+        // Rounded status bar visual provider
+        self.controlCenterGrabberEffectContainerView.frame = CGRectMake(self.frame.size.width - 85.5,26,60.5,2.5);
+        self.controlCenterGrabberView.frame = CGRectMake(0,0,60.5,2.5);
     } else {
-			// Non-rounded status bar visual provider
-			self.controlCenterGrabberEffectContainerView.frame = CGRectMake(self.frame.size.width - 75.5,24,60.5,2.5);
-      self.controlCenterGrabberView.frame = CGRectMake(0,0,60.5,2.5);
-		}
+        // Non-rounded status bar visual provider
+        self.controlCenterGrabberEffectContainerView.frame = CGRectMake(self.frame.size.width - 75.5,24,60.5,2.5);
+        self.controlCenterGrabberView.frame = CGRectMake(0,0,60.5,2.5);
+    }
 }
 %end
 
@@ -250,10 +254,10 @@ NEPStatusBarHeightStyle _statusBarHeightStyle = Tall;
     if (self.cornerRadius == 20) {
         self.cornerRadius = 5;
     }
-		UIView* _overlayClippingView = MSHookIvar<UIView*>(self, "_overlayClippingView");
-		if (!_overlayClippingView.layer.allowsEdgeAntialiasing) {
-			_overlayClippingView.layer.allowsEdgeAntialiasing = true;
-		}
+    UIView* _overlayClippingView = MSHookIvar<UIView*>(self, "_overlayClippingView");
+    if (!_overlayClippingView.layer.allowsEdgeAntialiasing) {
+        _overlayClippingView.layer.allowsEdgeAntialiasing = true;
+    }
     %orig;
     return;
 }
@@ -279,17 +283,17 @@ long _iconHighlightInitiationSkipper = 0;
 - (void)setHighlighted:(bool)arg1 {
 
     if (_iconHighlightInitiationSkipper) {
-      %orig;
-      return;
+        %orig;
+        return;
     }
 
     if (arg1 == YES) {
 
         if (!self.highlighted) {
-          _iconHighlightInitiationSkipper = 1;
-          %orig;
-          %orig(NO);
-          _iconHighlightInitiationSkipper = 0;
+            _iconHighlightInitiationSkipper = 1;
+            %orig;
+            %orig(NO);
+            _iconHighlightInitiationSkipper = 0;
         }
 
         UIViewPropertyAnimator *animator = [[UIViewPropertyAnimator alloc] initWithDuration:0.125 dampingRatio:1 animations:^{
@@ -297,7 +301,7 @@ long _iconHighlightInitiationSkipper = 0;
         }];
         [animator startAnimation];
     } else {
-        UIViewPropertyAnimator *animator = [[UIViewPropertyAnimator alloc] initWithDuration:0.25 dampingRatio:1 animations:^{
+        UIViewPropertyAnimator *animator = [[UIViewPropertyAnimator alloc] initWithDuration:0.3 dampingRatio:1 animations:^{
             %orig;
         }];
         [animator startAnimation];
@@ -369,26 +373,6 @@ long _iconHighlightInitiationSkipper = 0;
 }
 %end
 
-
-// Hide HomeBar
-@interface MTLumaDodgePillView : UIView
-@end
-
-%hook MTLumaDodgePillView
-- (id)initWithFrame:(struct CGRect)arg1 {
-
-    NSString *settingsPath = @"/var/mobile/Library/Preferences/com.duraidabdul.neptune.plist";
-    NSMutableDictionary *currentSettings = [[NSMutableDictionary alloc] initWithContentsOfFile:settingsPath];
-    BOOL isHomeIndicatorEnabled = [[currentSettings objectForKey:@"isHomeIndicatorEnabled"] boolValue];
-
-    if (!isHomeIndicatorEnabled) {
-        return NULL;
-    } else {
-        return %orig;
-    }
-}
-%end
-
 /*
  @interface SBUIProudLockIconView : UIView
  @end
@@ -414,9 +398,9 @@ long _iconHighlightInitiationSkipper = 0;
 
  }
  %end
- */
 
-/*
+
+
  @interface SBFLockScreenDateView : UIView
  @end
 
@@ -515,7 +499,33 @@ long _iconHighlightInitiationSkipper = 0;
 }
 %end
 
+// High Resolution Wallpaper
+@interface SBFStaticWallpaperImageView : UIImageView
+@end
 
+#define kBundlePath @"/Library/Application Support/Neptune"
+/*
+ %hook SBFStaticWallpaperImageView
+ - (void)setImage:(id)arg1 {
+
+ if (isPrototypingEnabled) {
+ return %orig;
+ }
+
+ NSBundle *bundle = [[NSBundle alloc] initWithPath:kBundlePath];
+ NSString *imagePath = [bundle pathForResource:@"DoubleBubble_Red" ofType:@"png"];
+ UIImage *myImage = [UIImage imageWithContentsOfFile:imagePath];
+
+ UIImage *originalDownscaledImage = arg1;
+
+ if (originalDownscaledImage.size.width == 375) {
+ return %orig(myImage);
+ }
+
+ return %orig(arg1);
+ }
+ %end
+ */
 %end
 
 
@@ -559,40 +569,9 @@ long _iconHighlightInitiationSkipper = 0;
 
 %end
 
-
 %hook UIInputWindowController
 - (UIEdgeInsets)_viewSafeAreaInsetsFromScene {
     return UIEdgeInsetsMake(0,0,44,0);
-}
-%end
-
-%end
-
-// MARK: - Modern status bar implementation
-%group ModernStatusBarView
-
-@interface _UIStatusBar
-+ (void)setVisualProviderClass:(Class)classOb;
-@end
-
-%hook UIStatusBarWindow
-+ (void)setStatusBar:(Class)arg1 {
-    %orig(NSClassFromString(@"UIStatusBar_Modern"));
-}
-%end
-
-%hook UIStatusBar_Base
-+ (Class)_implementationClass {
-    return NSClassFromString(@"UIStatusBar_Modern");
-}
-+ (void)_setImplementationClass:(Class)arg1 {
-    %orig(NSClassFromString(@"UIStatusBar_Modern"));
-}
-%end
-
-%hook _UIStatusBarData
-- (void)setBackNavigationEntry:(id)arg1 {
-	return;
 }
 %end
 
@@ -618,44 +597,75 @@ int _controlCenterStatusBarInset = -10;
 
 %end
 
-%group StatusBar_Split58
+%group StatusBarProvider
 
 // MARK: - Variable modern status bar implementation
 
 %hook _UIStatusBarVisualProvider_iOS
 + (Class)class {
-    return NSClassFromString(@"_UIStatusBarVisualProvider_Split58");
-}
-%end
-
-%hook _UIStatusBar
-+ (double)heightForOrientation:(long long)arg1 {
-    if (arg1 == 1 || arg1 == 2) {
-        return %orig - 10;
+    if (statusBarStyle == 0) {
+        return NSClassFromString(@"_UIStatusBarVisualProvider_Split58");
+    } else if (statusBarStyle == 1) {
+        if (@available(iOS 12.1, *)) {
+            return NSClassFromString(@"_UIStatusBarVisualProvider_RoundedPad_ForcedCellular");
+        }
+        return NSClassFromString(@"_UIStatusBarVisualProvider_Pad_ForcedCellular");
     } else {
         return %orig;
     }
 }
 %end
 
+%hook _UIStatusBar
++ (double)heightForOrientation:(long long)arg1 {
+    if (arg1 == 1 || arg1 == 2) {
+        if (statusBarStyle == 0) {
+            return %orig - 10;
+        } else if (statusBarStyle == 1) {
+            return %orig - 4;
+        } else {
+            return %orig;
+        }
+    } else {
+        return %orig;
+    }
+}
 %end
 
-
-%group StatusBar_Pad_ForcedCellular
-
-// MARK: - Variable alternate modern status bar implementation
-
-%hook _UIStatusBarVisualProvider_iOS
-+ (Class)class {
-    if (@available(iOS 12.1, *)) {
-      return NSClassFromString(@"_UIStatusBarVisualProvider_RoundedPad_ForcedCellular");
+%hook UIStatusBarWindow
++ (void)setStatusBar:(Class)arg1 {
+    if (statusBarStyle != 2) {
+        return %orig(NSClassFromString(@"UIStatusBar_Modern"));
     }
-    return NSClassFromString(@"_UIStatusBarVisualProvider_Pad_ForcedCellular");
+    %orig;
+}
+%end
+
+%hook UIStatusBar_Base
++ (Class)_implementationClass {
+    if (statusBarStyle != 2) {
+        return NSClassFromString(@"UIStatusBar_Modern");
+    }
+    return %orig;
+}
++ (void)_setImplementationClass:(Class)arg1 {
+    if (statusBarStyle != 2) {
+        return %orig(NSClassFromString(@"UIStatusBar_Modern"));
+    }
+    %orig;
+}
+%end
+
+%hook _UIStatusBarData
+- (void)setBackNavigationEntry:(id)arg1 {
+    return;
 }
 %end
 
 %end
 
+
+float _bottomInset = 21;
 
 %group TabBarSizing
 
@@ -692,27 +702,24 @@ int _controlCenterStatusBarInset = -10;
 
 %hook UIApplicationSceneSettings
 
-- (UIEdgeInsets)_inferredLayoutMargins {
-    return UIEdgeInsetsMake(32,0,0,0);
-}
 - (UIEdgeInsets)safeAreaInsetsLandscapeLeft {
     UIEdgeInsets _insets = %orig;
-    _insets.bottom = 21;
+    _insets.bottom = _bottomInset;
     return _insets;
 }
 - (UIEdgeInsets)safeAreaInsetsLandscapeRight {
     UIEdgeInsets _insets = %orig;
-    _insets.bottom = 21;
+    _insets.bottom = _bottomInset;
     return _insets;
 }
 - (UIEdgeInsets)safeAreaInsetsPortrait {
     UIEdgeInsets _insets = %orig;
-    _insets.bottom = 21;
+    _insets.bottom = _bottomInset;
     return _insets;
 }
 - (UIEdgeInsets)safeAreaInsetsPortraitUpsideDown {
     UIEdgeInsets _insets = %orig;
-    _insets.bottom = 21;
+    _insets.bottom = _bottomInset;
     return _insets;
 }
 
@@ -744,6 +751,17 @@ int _controlCenterStatusBarInset = -10;
 
  %end
  */
+%end
+
+%group HideLuma
+
+// Hide Home Indicator
+%hook UIViewController
+- (BOOL)prefersHomeIndicatorAutoHidden {
+    return YES;
+}
+%end
+
 %end
 
 // MARK: - Shortcuts
@@ -893,8 +911,8 @@ extern "C" Boolean MGGetBoolAnswer(CFStringRef);
                 }
             }
 
-            #pragma clang diagnostic push
-            #pragma clang diagnostic ignored "-Wunguarded-availability"
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunguarded-availability"
             if (_cellPosition == Top) {
                 self.layer.maskedCorners = kCALayerMinXMinYCorner | kCALayerMaxXMinYCorner;
             } else if (_cellPosition == Bottom) {
@@ -903,7 +921,7 @@ extern "C" Boolean MGGetBoolAnswer(CFStringRef);
                 self.layer.cornerRadius = 0;
                 self.clipsToBounds = NO;
             }
-            #pragma clang diagnostic pop
+#pragma clang diagnostic pop
         }
     }
 }
@@ -927,26 +945,60 @@ extern "C" Boolean MGGetBoolAnswer(CFStringRef);
 
 %end
 
-@interface FBSystemService : NSObject
-+ (id)sharedInstance;
-- (void)exitAndRelaunch:(BOOL)unknown;
+%group Castro
+
+@interface SUPTabsCardViewController : UIViewController
 @end
 
-static void respring(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo) {
-    [[%c(FBSystemService) sharedInstance] exitAndRelaunch:YES];
+%hook SUPTabsCardViewController
+- (void)viewDidLoad {
+    %orig;
+    self.view.layer.mask = NULL;
+    self.view.layer.continuousCorners = YES;
+    self.view.layer.masksToBounds = YES;
+    self.view.layer.cornerRadius = 10;
 }
+%end
+
+@interface SUPDimExternalImageViewButton : UIView
+- (void)setHighlighted:(bool)arg1;
+@end
+
+%hook SUPDimExternalImageViewButton
+- (void)setHighlighted:(bool)arg1 {
+    if (arg1 == YES) {
+
+        UIViewPropertyAnimator *animator = [[UIViewPropertyAnimator alloc] initWithDuration:0.1 curve:UIViewAnimationCurveEaseOut animations:^{
+            %orig;
+        }];
+        [animator startAnimation];
+    } else {
+        UIViewPropertyAnimator *animator = [[UIViewPropertyAnimator alloc] initWithDuration:0.4 dampingRatio:1 animations:^{
+            %orig;
+        }];
+        [animator startAnimation];
+    }
+    return;
+}
+%end
+
+%end
+
+
+
 
 %ctor {
+
     NSString *bundleIdentifier = [NSBundle mainBundle].bundleIdentifier;
 
     // Gather current preference keys.
     NSString *settingsPath = @"/var/mobile/Library/Preferences/com.duraidabdul.neptune.plist";
     NSMutableDictionary *currentSettings = [[NSMutableDictionary alloc] initWithContentsOfFile:settingsPath];
-    BOOL isHomeIndicatorEnabled = [[currentSettings objectForKey:@"isHomeIndicatorEnabled"] boolValue];
-    BOOL isButtonCombinationOverrideDisabled = [[currentSettings objectForKey:@"isButtonCombinationOverrideDisabled"] boolValue];
-    BOOL isTallKeyboardEnabled = [[currentSettings objectForKey:@"isTallKeyboardEnabled"] boolValue];
-    BOOL isPIPEnabled = [[currentSettings objectForKey:@"isPIPEnabled"] boolValue];
-    int  statusBarStyle = [[currentSettings objectForKey:@"statusBarStyle"] intValue];
+    isHomeIndicatorEnabled = [[currentSettings objectForKey:@"isHomeIndicatorEnabled"] boolValue];
+    isButtonCombinationOverrideDisabled = [[currentSettings objectForKey:@"isButtonCombinationOverrideDisabled"] boolValue];
+    isTallKeyboardEnabled = [[currentSettings objectForKey:@"isTallKeyboardEnabled"] boolValue];
+    isPIPEnabled = [[currentSettings objectForKey:@"isPIPEnabled"] boolValue];
+    statusBarStyle = [[currentSettings objectForKey:@"statusBarStyle"] intValue];
 
     // Conditional status bar initialization
     NSArray *acceptedStatusBarIdentifiers = @[@"com.apple",
@@ -955,35 +1007,58 @@ static void respring(CFNotificationCenterRef center, void *observer, CFStringRef
                                               @"com.facebook.Messenger"
                                               ];
 
+    if (!isHomeIndicatorEnabled) {
+        %init(HideLuma);
+    }
+
     BOOL isStatusBarEnabled = false;
 
     for (NSString *identifier in acceptedStatusBarIdentifiers) {
         if ([bundleIdentifier containsString:identifier]) {
-          isStatusBarEnabled = true;
+            isStatusBarEnabled = true;
         }
     }
 
-    if (isStatusBarEnabled && statusBarStyle == 0) {
-        %init(StatusBar_Split58);
-    } else {
-        %init(StatusBar_Pad_ForcedCellular);
+    if (isStatusBarEnabled) {
+        %init(StatusBarProvider)
     }
 
-    if (statusBarStyle != 2) {
-      %init(ModernStatusBarView);
-    }
 
     // Conditional inset adjustment initialization
     NSArray *acceptedInsetAdjustmentIdentifiers = @[@"com.apple",
-                                              @"com.culturedcode.ThingsiPhone",
-                                              @"com.christianselig.Apollo"
-                                              ];
+                                                    @"com.culturedcode.ThingsiPhone",
+                                                    @"com.christianselig.Apollo",
+                                                    @"co.supertop.Castro-2",
+                                                    @"com.chromanoir.Zeit",
+                                                    @"com.chromanoir.spectre"
+                                                    ];
+    NSArray *acceptedInsetAdjustmentIdentifiers_NoTabBarLabels = @[@"com.facebook.Facebook",
+                                                                   @"com.facebook.Messenger",
+                                                                   @"com.burbn.instagram",
+                                                                   @"com.medium.reader",
+                                                                   @"com.pcalc.mobile"
+                                                                   ];
 
     BOOL isInsetAdjustmentEnabled = false;
 
-    for (NSString *identifier in acceptedInsetAdjustmentIdentifiers) {
-        if ([bundleIdentifier containsString:identifier] && ![bundleIdentifier containsString:@"mobilesafari"]) {
-            isInsetAdjustmentEnabled = true;
+    if ([bundleIdentifier containsString:@"supertop"]) {
+        %init(Castro);
+    }
+
+    if (![bundleIdentifier containsString:@"mobilesafari"]) {
+        for (NSString *identifier in acceptedInsetAdjustmentIdentifiers) {
+            if ([bundleIdentifier containsString:identifier]) {
+                isInsetAdjustmentEnabled = true;
+                break;
+            }
+        }
+        if (!isInsetAdjustmentEnabled) {
+            for (NSString *identifier in acceptedInsetAdjustmentIdentifiers_NoTabBarLabels) {
+                if ([bundleIdentifier containsString:identifier]) {
+                    _bottomInset = 16;
+                    isInsetAdjustmentEnabled = true;
+                }
+            }
         }
     }
 
@@ -995,19 +1070,15 @@ static void respring(CFNotificationCenterRef center, void *observer, CFStringRef
     // SpringBoard
     if ([bundleIdentifier isEqualToString:@"com.apple.springboard"]) {
         if (statusBarStyle != 0) {
-          _statusBarHeightStyle = Regular;
-          if (@available(iOS 12.1, *)) {
-            _controlCenterStatusBarInset = -20;
-          } else {
+            _statusBarHeightStyle = Regular;
             _controlCenterStatusBarInset = -24;
-          }
         }
         %init(SpringBoardModifications);
         %init(ControlCenterModificationsStatusBar);
     }
 
     // Wallet
-    if ([bundleIdentifier containsString:@"Passbook--ALPHA"]) {
+    if ([bundleIdentifier containsString:@"Passbook"] && isPrototypingEnabled) {
         %init(Wallet122UI);
     }
 
@@ -1043,11 +1114,4 @@ static void respring(CFNotificationCenterRef center, void *observer, CFStringRef
 
     // Any ungrouped hooks
     %init(_ungrouped);
-
-    // Respring notification observer
-    CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(),
-                                    NULL,
-                                    &respring,
-                                    CFSTR("respring"),
-                                    NULL, 0);
 }
