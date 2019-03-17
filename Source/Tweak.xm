@@ -1,14 +1,18 @@
 #import <UIKit/UIKit.h>
 #import <objc/runtime.h>
 
-long _homeButtonType = 1;
-BOOL isHomeIndicatorEnabled = YES;
-BOOL isButtonCombinationOverrideDisabled = NO;
-BOOL isTallKeyboardEnabled = YES;
-BOOL isPIPEnabled = NO;
-int  statusBarStyle = 1;
+#define kBundlePath @"/Library/Application Support/Neptune"
 
-long isPrototypingEnabled = NO;
+BOOL isFluidInterfaceEnabled;
+long _homeButtonType = 1;
+BOOL isHomeIndicatorEnabled;
+BOOL isButtonCombinationOverrideDisabled;
+BOOL isTallKeyboardEnabled;
+BOOL isPIPEnabled;
+int  statusBarStyle;
+BOOL isWalletEnabled;
+BOOL isNewsIconEnabled;
+BOOL prototypingEnabled = NO;
 
 @interface CALayer (CornerAddition)
 -(bool)continuousCorners;
@@ -16,45 +20,84 @@ long isPrototypingEnabled = NO;
 -(void)setContinuousCorners:(bool)arg1;
 @end
 
-
-// MARK: - Button remap
+/// MARK: - Group: Button remap
 %group ButtonRemap
 
-// Press Home Button for Siri
+// Siri remap
 %hook SBLockHardwareButtonActions
 - (id)initWithHomeButtonType:(long long)arg1 proximitySensorManager:(id)arg2 {
     return %orig(_homeButtonType, arg2);
 }
 %end
+
 %hook SBHomeHardwareButtonActions
 - (id)initWitHomeButtonType:(long long)arg1 {
     return %orig(_homeButtonType);
 }
 %end
 
+// Screenshot remap
+int applicationDidFinishLaunching;
+
+%hook SpringBoard
+-(void)applicationDidFinishLaunching:(id)application {
+    applicationDidFinishLaunching = 2;
+    %orig;
+}
+%end
+
+%hook SBPressGestureRecognizer
+- (void)setAllowedPressTypes:(NSArray *)arg1 {
+    NSArray * lockHome = @[@104, @101];
+    NSArray * lockVol = @[@104, @102, @103];
+    if ([arg1 isEqual:lockVol] && applicationDidFinishLaunching == 2) {
+        %orig(lockHome);
+        applicationDidFinishLaunching--;
+        return;
+    }
+    %orig;
+}
+%end
+
+%hook SBClickGestureRecognizer
+- (void)addShortcutWithPressTypes:(id)arg1 {
+    if (applicationDidFinishLaunching == 1) {
+        applicationDidFinishLaunching--;
+        return;
+    }
+    %orig;
+}
+%end
+
 %hook SBHomeHardwareButton
 - (id)initWithScreenshotGestureRecognizer:(id)arg1 homeButtonType:(long long)arg2 buttonActions:(id)arg3 gestureRecognizerConfiguration:(id)arg4 {
-    return %orig(arg1, _homeButtonType, arg3, arg4);
+    return %orig(arg1,_homeButtonType,arg3,arg4);
 }
 - (id)initWithScreenshotGestureRecognizer:(id)arg1 homeButtonType:(long long)arg2 {
-    return %orig(arg1, _homeButtonType);
+    return %orig(arg1,_homeButtonType);
+}
+%end
+
+%hook SBLockHardwareButton
+- (id)initWithScreenshotGestureRecognizer:(id)arg1 shutdownGestureRecognizer:(id)arg2 proximitySensorManager:(id)arg3 homeHardwareButton:(id)arg4 volumeHardwareButton:(id)arg5 buttonActions:(id)arg6 homeButtonType:(long long)arg7 createGestures:(_Bool)arg8 {
+    return %orig(arg1,arg2,arg3,arg4,arg5,arg6,_homeButtonType,arg8);
+}
+- (id)initWithScreenshotGestureRecognizer:(id)arg1 shutdownGestureRecognizer:(id)arg2 proximitySensorManager:(id)arg3 homeHardwareButton:(id)arg4 volumeHardwareButton:(id)arg5 homeButtonType:(long long)arg6 {
+    return %orig(arg1,arg2,arg3,arg4,arg5,_homeButtonType);
+}
+%end
+
+%hook SBVolumeHardwareButton
+- (id)initWithScreenshotGestureRecognizer:(id)arg1 shutdownGestureRecognizer:(id)arg2 homeButtonType:(long long)arg3 {
+    return %orig(arg1,arg2,_homeButtonType);
 }
 %end
 
 %end
 
-// MARK: - Group: Springboard modifications
-%group SpringBoardModifications
-
-// MARK: Enable fluid switcher
-%hook BSPlatform
-- (NSInteger)homeButtonType {
-    return 2;
-}
-%end
+%group ControlCenter122UI
 
 // MARK: Control Center media controls transition (from iOS 12.2 beta)
-
 @interface MediaControlsRoutingButtonView : UIView
 - (long long)currentMode;
 @end
@@ -71,7 +114,6 @@ static CALayer* platterLayer;
     if (self.currentMode == currentCachedMode) { return; }
 
     currentCachedMode = self.currentMode;
-
 
     if (self.layer.sublayers.count >= 1) {
         if (self.layer.sublayers[0].sublayers.count >= 1) {
@@ -136,139 +178,9 @@ static CALayer* platterLayer;
 }
 %end
 
-
-// MARK: Lock screen quick action toggle implementation
-
-// Define custom springboard method to remove all subviews.
-@interface UIView (SpringBoardAdditions)
-- (void)sb_removeAllSubviews;
-@end
-
-@interface SBDashBoardQuickActionsView : UIView
-@end
-
-// Reinitialize quick action toggles
-%hook SBDashBoardQuickActionsView
-- (void)_layoutQuickActionButtons {
-    %orig;
-    for (UIView *subview in self.subviews) {
-        if (subview.frame.size.width < 50) {
-            if (subview.frame.origin.x < 50) {
-                CGRect _frame = subview.frame;
-                _frame = CGRectMake(46, _frame.origin.y - 90, 50, 50);
-                subview.frame = _frame;
-                [subview sb_removeAllSubviews];
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-value"
-                [subview init];
-#pragma clang diagnostic pop
-            } else if (subview.frame.origin.x > 100) {
-                CGFloat _screenWidth = subview.frame.origin.x + subview.frame.size.width / 2;
-                CGRect _frame = subview.frame;
-                _frame = CGRectMake(_screenWidth - 96, _frame.origin.y - 90, 50, 50);
-                subview.frame = _frame;
-                [subview sb_removeAllSubviews];
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-value"
-                [subview init];
-#pragma clang diagnostic pop
-            }
-        }
-    }
-}
 %end
 
-// MARK: Cover sheet control centre grabber initialization
-
-typedef enum {
-    Tall=0,
-    Regular=1
-} NEPStatusBarHeightStyle;
-
-NEPStatusBarHeightStyle _statusBarHeightStyle = Tall;
-
-@interface SBDashBoardTeachableMomentsContainerView : UIView
-@property(retain, nonatomic) UIView *controlCenterGrabberView;
-@property(retain, nonatomic) UIView *controlCenterGrabberEffectContainerView;
-@end
-
-%hook SBDashBoardTeachableMomentsContainerView
-- (void)layoutSubviews {
-    %orig;
-
-    if (_statusBarHeightStyle == Tall) {
-        self.controlCenterGrabberEffectContainerView.frame = CGRectMake(self.frame.size.width - 73,36,46,2.5);
-        self.controlCenterGrabberView.frame = CGRectMake(0,0,46,2.5);
-    } else if (@available(iOS 12.1, *)) {
-        // Rounded status bar visual provider
-        self.controlCenterGrabberEffectContainerView.frame = CGRectMake(self.frame.size.width - 85.5,26,60.5,2.5);
-        self.controlCenterGrabberView.frame = CGRectMake(0,0,60.5,2.5);
-    } else {
-        // Non-rounded status bar visual provider
-        self.controlCenterGrabberEffectContainerView.frame = CGRectMake(self.frame.size.width - 75.5,24,60.5,2.5);
-        self.controlCenterGrabberView.frame = CGRectMake(0,0,60.5,2.5);
-    }
-}
-%end
-
-// MARK: Corner radius implementation
-
-@interface _UIRootWindow : UIView
-@property (setter=_setContinuousCornerRadius:, nonatomic) double _continuousCornerRadius;
-- (double)_continuousCornerRadius;
-- (void)_setContinuousCornerRadius:(double)arg1;
-@end
-
-// Implement system wide continuousCorners.
-%hook _UIRootWindow
-- (void)layoutSubviews {
-    %orig;
-    self._continuousCornerRadius = 5;
-    self.clipsToBounds = YES;
-    return;
-}
-%end
-
-// Implement corner radius adjustment for when in the app switcher scroll view.
-%hook SBDeckSwitcherPersonality
-- (CGFloat)_cardCornerRadiusInAppSwitcher {
-    CGFloat orig = 10;
-    return orig;
-}
-%end
-
-// Implement round screenshot preview edge insets.
-%hook UITraitCollection
-+ (id)traitCollectionWithDisplayCornerRadius:(CGFloat)arg1 {
-    return %orig(20);
-}
-%end
-
-@interface SBAppSwitcherPageView : UIView
-@property(nonatomic, assign) double cornerRadius;
-@end
-
-// Override rendered corner radius in app switcher page, (for anytime the fluid switcher gestures are running).
-%hook SBAppSwitcherPageView
-- (void)_updateCornerRadius {
-    if (self.cornerRadius == 20) {
-        self.cornerRadius = 5;
-    }
-    UIView* _overlayClippingView = MSHookIvar<UIView*>(self, "_overlayClippingView");
-    if (!_overlayClippingView.layer.allowsEdgeAntialiasing) {
-        _overlayClippingView.layer.allowsEdgeAntialiasing = true;
-    }
-    %orig;
-    return;
-}
-%end
-
-// Override Reachability corner radius.
-%hook SBReachabilityBackgroundView
-- (double)_displayCornerRadius {
-    return 5;
-}
-%end
+%group SBButtonRefinements
 
 // MARK: App icon selection override
 
@@ -309,7 +221,6 @@ long _iconHighlightInitiationSkipper = 0;
     return;
 }
 %end
-
 
 @interface NCToggleControl : UIView
 - (void)setHighlighted:(bool)arg1;
@@ -373,73 +284,6 @@ long _iconHighlightInitiationSkipper = 0;
 }
 %end
 
-/*
- @interface SBUIProudLockIconView : UIView
- @end
-
-
- @interface SBDashBoardView : UIView {
- UIView *_proudLockContainerView;
- }
- @end
-
- static SBUIProudLockIconView* proudLockIconView;
-
- %hook SBDashBoardView
- - (void)layoutSubviews {
- %orig;
-
- [proudLockIconView initWithFrame:CGRectMake(0, 0, 250, 250)];
- proudLockIconView.frame = CGRectMake(0, 0, 250, 250);
- proudLockIconView.backgroundColor=[UIColor blueColor];
- [self addSubview: proudLockIconView];
-
- //[[[self subviews] lastObject] addSubview:proudLockIconView];
-
- }
- %end
-
-
-
- @interface SBFLockScreenDateView : UIView
- @end
-
- %hook SBFLockScreenDateView
- - (void)layoutSubviews {
- %orig;
-
- UIView* np_timeLabel = MSHookIvar<UIView*>(self, "_timeLabel");
- CGRect temporaryCGRect = np_timeLabel.frame;
- temporaryCGRect.origin.y = temporaryCGRect.origin.y + 16;
- [np_timeLabel setFrame:temporaryCGRect];
-
- UIView* np_dateSubtitleView = MSHookIvar<UIView*>(self, "_dateSubtitleView");
- temporaryCGRect = np_dateSubtitleView.frame;
- temporaryCGRect.origin.y = temporaryCGRect.origin.y + 16;
- [np_dateSubtitleView setFrame:temporaryCGRect];
-
- UIView* np_customSubtitleView = MSHookIvar<UIView*>(self, "_customSubtitleView");
- temporaryCGRect = np_customSubtitleView.frame;
- temporaryCGRect.origin.y = temporaryCGRect.origin.y + 16;
- [np_customSubtitleView setFrame:temporaryCGRect];
- }
- %end
-
- %hook NCNotificationListCollectionView
- - (void)setFrame:(CGRect)arg1 {
-
- arg1.origin.y = arg1.origin.y + 16;
- %orig(arg1);
- }
-
- - (CGRect)frame {
- CGRect temporaryCGRect = %orig;
- temporaryCGRect.origin.y = temporaryCGRect.origin.y + 16;
- return temporaryCGRect;
- }
- %end
- */
-
 @interface SBFolderIconBackgroundView : UIView
 @end
 
@@ -465,9 +309,6 @@ long _iconHighlightInitiationSkipper = 0;
  %end
  */
 
-
-
-
 // MARK: Widgets screen button highlight
 @interface WGShortLookStyleButton : UIView
 - (void)setHighlighted:(bool)arg1;
@@ -491,6 +332,208 @@ long _iconHighlightInitiationSkipper = 0;
 }
 %end
 
+%end
+
+/// MARK: - Group: Springboard modifications
+%group FluidInterface
+
+// MARK: Enable fluid switcher
+%hook BSPlatform
+- (NSInteger)homeButtonType {
+    return 2;
+}
+%end
+
+// MARK: Lock screen quick action toggle implementation
+
+// Define custom springboard method to remove all subviews.
+@interface UIView (SpringBoardAdditions)
+- (void)sb_removeAllSubviews;
+@end
+
+@interface SBDashBoardQuickActionsView : UIView
+@end
+
+// Reinitialize quick action toggles
+%hook SBDashBoardQuickActionsView
+- (void)_layoutQuickActionButtons {
+
+    %orig;
+    for (UIView *subview in self.subviews) {
+        if (subview.frame.size.width < 50) {
+            if (subview.frame.origin.x < 50) {
+                CGRect _frame = subview.frame;
+                _frame = CGRectMake(46, _frame.origin.y - 90, 50, 50);
+                subview.frame = _frame;
+                [subview sb_removeAllSubviews];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-value"
+                [subview init];
+#pragma clang diagnostic pop
+            } else if (subview.frame.origin.x > 100) {
+                CGFloat _screenWidth = subview.frame.origin.x + subview.frame.size.width / 2;
+                CGRect _frame = subview.frame;
+                _frame = CGRectMake(_screenWidth - 96, _frame.origin.y - 90, 50, 50);
+                subview.frame = _frame;
+                [subview sb_removeAllSubviews];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-value"
+                [subview init];
+#pragma clang diagnostic pop
+            }
+        }
+    }
+}
+%end
+
+// MARK: Cover sheet control centre grabber initialization
+typedef enum {
+    Tall=0,
+    Regular=1
+} NEPStatusBarHeightStyle;
+
+NEPStatusBarHeightStyle _statusBarHeightStyle = Tall;
+
+@interface SBDashBoardTeachableMomentsContainerView : UIView
+@property(retain, nonatomic) UIView *controlCenterGrabberView;
+@property(retain, nonatomic) UIView *controlCenterGrabberEffectContainerView;
+@end
+
+%hook SBDashBoardTeachableMomentsContainerView
+- (void)layoutSubviews {
+    %orig;
+
+    if (_statusBarHeightStyle == Tall) {
+        self.controlCenterGrabberEffectContainerView.frame = CGRectMake(self.frame.size.width - 73,36,46,2.5);
+        self.controlCenterGrabberView.frame = CGRectMake(0,0,46,2.5);
+    } else if (@available(iOS 12.1, *)) {
+        // Rounded status bar visual provider
+        self.controlCenterGrabberEffectContainerView.frame = CGRectMake(self.frame.size.width - 85.5,26,60.5,2.5);
+        self.controlCenterGrabberView.frame = CGRectMake(0,0,60.5,2.5);
+    } else {
+        // Non-rounded status bar visual provider
+        self.controlCenterGrabberEffectContainerView.frame = CGRectMake(self.frame.size.width - 75.5,24,60.5,2.5);
+        self.controlCenterGrabberView.frame = CGRectMake(0,0,60.5,2.5);
+    }
+}
+%end
+
+// MARK: Corner radius implementation
+@interface _UIRootWindow : UIView
+@property (setter=_setContinuousCornerRadius:, nonatomic) double _continuousCornerRadius;
+- (double)_continuousCornerRadius;
+- (void)_setContinuousCornerRadius:(double)arg1;
+@end
+
+// Implement system wide continuousCorners.
+%hook _UIRootWindow
+- (void)layoutSubviews {
+    %orig;
+    self._continuousCornerRadius = 5;
+    self.clipsToBounds = YES;
+    return;
+}
+%end
+
+// Implement corner radius adjustment for when in the app switcher scroll view.
+/*%hook SBDeckSwitcherPersonality
+- (double)_cardCornerRadiusInAppSwitcher {
+    return 17.5;
+}
+%end*/
+
+// Implement round screenshot preview edge insets.
+%hook UITraitCollection
++ (id)traitCollectionWithDisplayCornerRadius:(CGFloat)arg1 {
+    return %orig(17);
+}
+%end
+
+@interface SBAppSwitcherPageView : UIView
+@property(nonatomic, assign) double cornerRadius;
+@property(nonatomic) _Bool blocksTouches;
+- (void)_updateCornerRadius;
+@end
+
+BOOL blockerPropagatedEvent = false;
+double currentCachedCornerRadius = 0;
+
+/// IMPORTANT: DO NOT MESS WITH THIS LOGIC. EVERYTHING HERE IS DONE FOR A REASON.
+
+// Override rendered corner radius in app switcher page, (for anytime the fluid switcher gestures are running).
+%hook SBAppSwitcherPageView
+
+-(void)setBlocksTouches:(BOOL)arg1 {
+    if (!arg1 && (self.cornerRadius == 17 || self.cornerRadius == 5 || self.cornerRadius == 3.5)) {
+        blockerPropagatedEvent = true;
+        self.cornerRadius = 5;
+        [self _updateCornerRadius];
+        blockerPropagatedEvent = false;
+    } else if (self.cornerRadius == 17 || self.cornerRadius == 5 || self.cornerRadius == 3.5) {
+        blockerPropagatedEvent = true;
+        self.cornerRadius = 17;
+        [self _updateCornerRadius];
+        blockerPropagatedEvent = false;
+    }
+
+    %orig(arg1);
+}
+
+- (void)setCornerRadius:(CGFloat)arg1 {
+
+    currentCachedCornerRadius = MSHookIvar<double>(self, "_cornerRadius");
+
+    CGFloat arg1_overwrite = arg1;
+
+    if ((arg1 != 17 || arg1 != 5 || arg1 != 0) && self.blocksTouches) {
+        return %orig(arg1);
+    }
+
+    if (blockerPropagatedEvent && arg1 != 17) {
+        return %orig(arg1);
+    }
+
+    if (arg1 == 0 && !self.blocksTouches) {
+        %orig(0);
+        return;
+    }
+
+    if (self.blocksTouches) {
+        arg1_overwrite = 17;
+    } else if (arg1 == 17) {
+        // THIS IS THE ONLY BLOCK YOU CAN CHANGE
+        arg1_overwrite = 5;
+        // Todo: detect when, in this case, the app is being pulled up from the bottom, and activate the rounded corners.
+    }
+
+    UIView* _overlayClippingView = MSHookIvar<UIView*>(self, "_overlayClippingView");
+    if (!_overlayClippingView.layer.allowsEdgeAntialiasing) {
+        _overlayClippingView.layer.allowsEdgeAntialiasing = true;
+    }
+
+    %orig(arg1_overwrite);
+}
+
+- (void)_updateCornerRadius {
+    /// CAREFUL HERE, WATCH OUT FOR THE ICON MORPH ANIMATION ON APPLICATION LAUNCH
+    if ((self.cornerRadius == 5 && currentCachedCornerRadius == 17.0)) {
+        UIViewPropertyAnimator *animator = [[UIViewPropertyAnimator alloc] initWithDuration:0.35 dampingRatio:1 animations:^{
+            %orig;
+        }];
+        [animator startAnimation];
+    } else {
+        %orig;
+    }
+}
+%end
+
+// Override Reachability corner radius.
+%hook SBReachabilityBackgroundView
+- (double)_displayCornerRadius {
+    return 5;
+}
+%end
+
 
 // MARK: Reachability settings override
 %hook SBReachabilitySettings
@@ -503,32 +546,28 @@ long _iconHighlightInitiationSkipper = 0;
 @interface SBFStaticWallpaperImageView : UIImageView
 @end
 
-#define kBundlePath @"/Library/Application Support/Neptune"
-/*
- %hook SBFStaticWallpaperImageView
- - (void)setImage:(id)arg1 {
+%hook SBFStaticWallpaperImageView
+- (void)setImage:(id)arg1 {
 
- if (isPrototypingEnabled) {
- return %orig;
- }
+    if (!prototypingEnabled) {
+        return %orig;
+    }
 
- NSBundle *bundle = [[NSBundle alloc] initWithPath:kBundlePath];
- NSString *imagePath = [bundle pathForResource:@"DoubleBubble_Red" ofType:@"png"];
- UIImage *myImage = [UIImage imageWithContentsOfFile:imagePath];
+    NSBundle *bundle = [[NSBundle alloc] initWithPath:kBundlePath];
+    NSString *imagePath = [bundle pathForResource:@"DoubleBubble_Red" ofType:@"png"];
+    UIImage *myImage = [UIImage imageWithContentsOfFile:imagePath];
 
- UIImage *originalDownscaledImage = arg1;
+    UIImage *originalDownscaledImage = arg1;
 
- if (originalDownscaledImage.size.width == 375) {
- return %orig(myImage);
- }
+    if (originalDownscaledImage.size.width == 375) {
+        return %orig(myImage);
+    }
 
- return %orig(arg1);
- }
- %end
- */
+    return %orig(arg1);
+}
 %end
 
-
+%end
 
 
 %group KeyboardDock
@@ -605,12 +644,10 @@ int _controlCenterStatusBarInset = -10;
 + (Class)class {
     if (statusBarStyle == 0) {
         return NSClassFromString(@"_UIStatusBarVisualProvider_Split58");
-    } else {
-        if (@available(iOS 12.1, *)) {
-            return NSClassFromString(@"_UIStatusBarVisualProvider_RoundedPad_ForcedCellular");
-        }
-        return NSClassFromString(@"_UIStatusBarVisualProvider_Pad_ForcedCellular");
+    } else if (@available(iOS 12.1, *)) {
+        return NSClassFromString(@"_UIStatusBarVisualProvider_RoundedPad_ForcedCellular");
     }
+    return NSClassFromString(@"_UIStatusBarVisualProvider_Pad_ForcedCellular");
 }
 %end
 
@@ -621,12 +658,9 @@ int _controlCenterStatusBarInset = -10;
             return %orig - 10;
         } else if (statusBarStyle == 1) {
             return %orig - 4;
-        } else {
-            return %orig;
         }
-    } else {
-        return %orig;
     }
+    return %orig;
 }
 %end
 
@@ -664,22 +698,6 @@ float _bottomInset = 21;
 %group TabBarSizing
 
 // MARK: - Inset behavior modifications
-
-/*
- %hook UIWindow
- - (UIEdgeInsets)safeAreaInsets {
- UIEdgeInsets orig = %orig;
- orig.bottom = 21;
- return orig;
- }
- - (UIEdgeInsets)_inferredLayoutMargins {
- UIEdgeInsets orig = %orig;
- orig.bottom = 21;
- return orig;
- }
- %end
- */
-
 %hook UITabBar
 
 - (void)layoutSubviews {
@@ -753,6 +771,20 @@ float _bottomInset = 21;
 %hook UIViewController
 - (BOOL)prefersHomeIndicatorAutoHidden {
     return YES;
+}
+%end
+
+%end
+
+%group CompletelyHideLuma
+
+// Hide HomeBar
+@interface MTLumaDodgePillView : UIView
+@end
+
+%hook MTLumaDodgePillView
+- (id)initWithFrame:(struct CGRect)arg1 {
+      return NULL;
 }
 %end
 
@@ -842,15 +874,75 @@ extern "C" Boolean MGGetBoolAnswer(CFStringRef);
 - (id)_viewControllerForAncestor;
 @end
 
+@interface UITextView (WalletAdditions)
+- (id)_viewControllerForAncestor;
+@end
+
+@interface PKContinuousButton : UIView
+@end
+
+
+
+%group NEPThemeEngine
+
+@interface SBApplicationIcon : NSObject
+@end
+
+%hook SBApplicationIcon
+- (id)getCachedIconImage:(int)arg1 {
+
+    NSString *_applicationBundleID = MSHookIvar<NSString*>(self, "_applicationBundleID");
+
+    if (/*[_applicationBundleID isEqualToString:@"com.atebits.Tweetie2"] || */[_applicationBundleID isEqualToString:@"com.apple.news"]) {
+
+        NSBundle *bundle = [[NSBundle alloc] initWithPath:kBundlePath];
+        NSString *imagePath = [bundle pathForResource:_applicationBundleID ofType:@"png"];
+        UIImage *myImage = [UIImage imageWithContentsOfFile:imagePath];
+
+        return myImage;
+    }
+    return %orig;
+}
+- (id)getUnmaskedIconImage:(int)arg1 {
+
+    NSString *_applicationBundleID = MSHookIvar<NSString*>(self, "_applicationBundleID");
+
+    if (/*[_applicationBundleID isEqualToString:@"com.atebits.Tweetie2"] || */[_applicationBundleID isEqualToString:@"com.apple.news"]) {
+
+        NSBundle *bundle = [[NSBundle alloc] initWithPath:kBundlePath];
+        NSString *imagePath = [bundle pathForResource:[NSString stringWithFormat:@"%@_unmasked", _applicationBundleID] ofType:@"png"];
+        UIImage *myImage = [UIImage imageWithContentsOfFile:imagePath];
+
+        return myImage;
+    }
+    return %orig;
+}
+- (id)generateIconImage:(int)arg1 {
+
+    NSString *_applicationBundleID = MSHookIvar<NSString*>(self, "_applicationBundleID");
+
+    if (/*[_applicationBundleID isEqualToString:@"com.atebits.Tweetie2"] || */[_applicationBundleID isEqualToString:@"com.apple.news"]) {
+
+        NSBundle *bundle = [[NSBundle alloc] initWithPath:kBundlePath];
+        NSString *imagePath = [bundle pathForResource:_applicationBundleID ofType:@"png"];
+        UIImage *myImage = [UIImage imageWithContentsOfFile:imagePath];
+
+        return myImage;
+    }
+    return %orig;
+}
+%end
+
+%end
 
 // MARK: - Wallet
 %group Wallet122UI
 
 %hook _UITableViewCellSeparatorView
 - (void)layoutSubviews {
-    if ([[NSString stringWithFormat:@"%@", self._viewControllerForAncestor] containsString:@"PassDetailViewController"]) {
+    if ([[NSString stringWithFormat:@"%@", self._viewControllerForAncestor] containsString:@"PassDetailViewController"] || [[NSString stringWithFormat:@"%@", self._viewControllerForAncestor] containsString:@"PKPaymentPreferencesViewController"]) {
         if (self.frame.origin.x == 0) {
-            self.backgroundColor = [UIColor clearColor];
+            self.hidden = YES;
         }
     }
 }
@@ -865,19 +957,38 @@ extern "C" Boolean MGGetBoolAnswer(CFStringRef);
 }
 %end
 
+%hook UITextView
+- (void)layoutSubviews {
+    %orig;
+    CGRect _frame = self.frame;
+    if ([[NSString stringWithFormat:@"%@", self._viewControllerForAncestor] containsString:@"PKBarcodePassDetailViewController"] && _frame.origin.x == 16) {
+        _frame.origin.x += 10;
+        self.frame = _frame;
+    }
+}
+%end
+
+
+
+%hook PKContinuousButton
+- (void)updateTitleColorWithColor:(id)arg1 {
+    //if (self.frame.size.width < 90) {
+    //%orig([UIColor blackColor]);
+    //} else {
+    %orig;
+    //}
+}
+%end
+
 %hook UITableViewCell
 - (void)layoutSubviews {
     %orig;
-    if ([[NSString stringWithFormat:@"%@", self._viewControllerForAncestor] containsString:@"PassDetailViewController"]) {
+    if ([[NSString stringWithFormat:@"%@", self._viewControllerForAncestor] containsString:@"PassDetailViewController"] || [[NSString stringWithFormat:@"%@", self._viewControllerForAncestor] containsString:@"PKPaymentPreferencesViewController"]) {
         CGRect _frame = self.frame;
         if (_frame.origin.x == 0) {
 
             self.layer.cornerRadius = 10;
             self.clipsToBounds = YES;
-
-            _frame.size.width -= 32;
-            _frame.origin.x = 16;
-            self.frame = _frame;
 
             typedef enum {
                 Lone=0,
@@ -891,7 +1002,6 @@ extern "C" Boolean MGGetBoolAnswer(CFStringRef);
             for (UIView *subview in self.subviews) {
                 if ([[NSString stringWithFormat:@"%@", subview] containsString:@"_UITableViewCellSeparatorView"] && subview.frame.origin.x == 0 && subview.frame.origin.y == 0 && subview.frame.size.height == 0.5) {
                     _cellPosition = Top;
-                    [subview removeFromSuperview];
                 }
             }
 
@@ -916,6 +1026,10 @@ extern "C" Boolean MGGetBoolAnswer(CFStringRef);
                 self.clipsToBounds = NO;
             }
 #pragma clang diagnostic pop
+
+            _frame.size.width -= 32;
+            _frame.origin.x = 16;
+            self.frame = _frame;
         }
     }
 }
@@ -934,6 +1048,20 @@ extern "C" Boolean MGGetBoolAnswer(CFStringRef);
         }
     }
     %orig;
+}
+%end
+
+%end
+
+%group Maps
+
+@interface MapsProgressButton : UIView
+@end
+
+%hook MapsProgressButton
+- (void)layoutSubviews {
+    %orig;
+    self.layer.continuousCorners = true;
 }
 %end
 
@@ -978,32 +1106,57 @@ extern "C" Boolean MGGetBoolAnswer(CFStringRef);
 
 %end
 
-
-
-
 %ctor {
 
     NSString *bundleIdentifier = [NSBundle mainBundle].bundleIdentifier;
 
     // Gather current preference keys.
     NSString *settingsPath = @"/var/mobile/Library/Preferences/com.duraidabdul.neptune.plist";
-    NSMutableDictionary *currentSettings = [[NSMutableDictionary alloc] initWithContentsOfFile:settingsPath];
+
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+
+    NSMutableDictionary *currentSettings;
+
+    BOOL shouldReadAndWriteDefaults = false;
+
+    if ([fileManager fileExistsAtPath:settingsPath]){
+        currentSettings = [[NSMutableDictionary alloc] initWithContentsOfFile:settingsPath];
+        if ([[currentSettings objectForKey:@"preferencesVersionID"] intValue] != 100) {
+          shouldReadAndWriteDefaults = true;
+        }
+    } else {
+      shouldReadAndWriteDefaults = true;
+    }
+
+    if (shouldReadAndWriteDefaults) {
+      NSBundle *bundle = [[NSBundle alloc] initWithPath:kBundlePath];
+      NSString *defaultsPath = [bundle pathForResource:@"defaults" ofType:@"plist"];
+      currentSettings = [[NSMutableDictionary alloc] initWithContentsOfFile:defaultsPath];
+
+      [currentSettings writeToFile: settingsPath atomically:YES];
+    }
+
+    isFluidInterfaceEnabled = [[currentSettings objectForKey:@"isFluidInterfaceEnabled"] boolValue];
     isHomeIndicatorEnabled = [[currentSettings objectForKey:@"isHomeIndicatorEnabled"] boolValue];
     isButtonCombinationOverrideDisabled = [[currentSettings objectForKey:@"isButtonCombinationOverrideDisabled"] boolValue];
     isTallKeyboardEnabled = [[currentSettings objectForKey:@"isTallKeyboardEnabled"] boolValue];
     isPIPEnabled = [[currentSettings objectForKey:@"isPIPEnabled"] boolValue];
     statusBarStyle = [[currentSettings objectForKey:@"statusBarStyle"] intValue];
+    isWalletEnabled = [[currentSettings objectForKey:@"isWalletEnabled"] boolValue];
+    isNewsIconEnabled = [[currentSettings objectForKey:@"isNewsIconEnabled"] boolValue];
+    prototypingEnabled = [[currentSettings objectForKey:@"prototypingEnabled"] boolValue];
+
+
 
     // Conditional status bar initialization
     NSArray *acceptedStatusBarIdentifiers = @[@"com.apple",
                                               @"com.culturedcode.ThingsiPhone",
                                               @"com.christianselig.Apollo",
-                                              @"com.facebook.Messenger"
+                                              @"co.supertop.Castro-2",
+                                              @"com.facebook.Messenger",
+                                              @"com.saurik.Cydia",
+                                              @"is.workflow.my.app"
                                               ];
-
-    if (!isHomeIndicatorEnabled) {
-        %init(HideLuma);
-    }
 
     %init(StatusBarProvider);
 
@@ -1019,7 +1172,9 @@ extern "C" Boolean MGGetBoolAnswer(CFStringRef);
                                                     @"com.christianselig.Apollo",
                                                     @"co.supertop.Castro-2",
                                                     @"com.chromanoir.Zeit",
-                                                    @"com.chromanoir.spectre"
+                                                    @"com.chromanoir.spectre",
+                                                    @"com.saurik.Cydia",
+                                                    @"is.workflow.my.app"
                                                     ];
     NSArray *acceptedInsetAdjustmentIdentifiers_NoTabBarLabels = @[@"com.facebook.Facebook",
                                                                    @"com.facebook.Messenger",
@@ -1029,10 +1184,6 @@ extern "C" Boolean MGGetBoolAnswer(CFStringRef);
                                                                    ];
 
     BOOL isInsetAdjustmentEnabled = false;
-
-    if ([bundleIdentifier containsString:@"supertop"]) {
-        %init(Castro);
-    }
 
     if (![bundleIdentifier containsString:@"mobilesafari"]) {
         for (NSString *identifier in acceptedInsetAdjustmentIdentifiers) {
@@ -1051,9 +1202,15 @@ extern "C" Boolean MGGetBoolAnswer(CFStringRef);
         }
     }
 
-    if (isInsetAdjustmentEnabled && isHomeIndicatorEnabled) {
-        %init(TabBarSizing);
-        %init(ToolbarSizing);
+    if (isHomeIndicatorEnabled && isFluidInterfaceEnabled) {
+      if (isInsetAdjustmentEnabled) {
+          %init(TabBarSizing);
+          %init(ToolbarSizing);
+      } else {
+          %init(HideLuma);
+      }
+    } else {
+      %init(CompletelyHideLuma);
     }
 
     // SpringBoard
@@ -1062,12 +1219,20 @@ extern "C" Boolean MGGetBoolAnswer(CFStringRef);
             _statusBarHeightStyle = Regular;
             _controlCenterStatusBarInset = -24;
         }
-        %init(SpringBoardModifications);
-        %init(ControlCenterModificationsStatusBar);
+        if (isFluidInterfaceEnabled) {
+          %init(FluidInterface)
+          %init(ButtonRemap)
+        }
+
+        %init(ControlCenter122UI)
+        if (isFluidInterfaceEnabled) {
+          %init(ControlCenterModificationsStatusBar)
+        }
+        %init(SBButtonRefinements)
     }
 
     // Wallet
-    if ([bundleIdentifier containsString:@"Passbook"] && isPrototypingEnabled) {
+    if ([bundleIdentifier containsString:@"Passbook"] && isWalletEnabled) {
         %init(Wallet122UI);
     }
 
@@ -1081,19 +1246,27 @@ extern "C" Boolean MGGetBoolAnswer(CFStringRef);
         %init(Calendar);
     }
 
+    // Maps
+    if ([bundleIdentifier containsString:@"com.apple.Maps"]) {
+        %init(Maps);
+    }
+
     // Twitter
-    if ([bundleIdentifier containsString:@"com.atebits.Tweetie2"]) {
+    if ([bundleIdentifier containsString:@"com.atebits.Tweetie2"] && prototypingEnabled) {
         %init(Twitter);
     }
 
-    // Button combination override
-    if (!isButtonCombinationOverrideDisabled) {
-        %init(ButtonRemap)
+    if ([bundleIdentifier containsString:@"supertop"]) {
+        %init(Castro);
     }
 
     // Picture in picture
     if (isPIPEnabled) {
         %init(PIPOverride);
+    }
+
+    if (isNewsIconEnabled && [bundleIdentifier containsString:@"com.apple.springboard"]) {
+        %init(NEPThemeEngine);
     }
 
     // Keyboard height adjustment
