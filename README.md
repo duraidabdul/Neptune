@@ -13,12 +13,16 @@ Fluid Springboard for iOS 12.
 
 - Picture in Picture on iPhone.
 
+- iOS 12.2 Wallet design.
+
+- iOS 12.2 News icon.
+
 - More coming in the future :)
 
 **Acknowledgments**: This is a fork of [HomeGesture](https://github.com/midnightchip/midnightchip.github.io), developed by the incredibly talented MidnightChips!
 
 ###### Version
-1.0
+1.0 GM
 ###### Compatibility
 Requires iOS 12.0 or later. Made for iPhone.
 
