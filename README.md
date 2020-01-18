@@ -1,5 +1,5 @@
 # Neptune
-Fluid Springboard for iOS 12.
+Fluid SpringBoard for iOS 12.
 
 ![](https://github.com/duraidabdul/Neptune/blob/master/Previews.png?raw=true)
 
