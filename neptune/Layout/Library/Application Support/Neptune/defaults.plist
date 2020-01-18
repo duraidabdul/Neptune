@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>isFluidInterfaceEnabled</key>
+	<true/>
+	<key>isHomeIndicatorEnabled</key>
+	<true/>
+	<key>isNewsIconEnabled</key>
+	<false/>
+	<key>isTVIconEnabled</key>
+	<string>NO</string>
+	<key>isPIPEnabled</key>
+	<false/>
+	<key>isTallKeyboardEnabled</key>
+	<true/>
+	<key>isWalletEnabled</key>
+	<true/>
+	<key>statusBarStyle</key>
+	<integer>1</integer>
+	<key>prototypingEnabled</key>
+	<false/>
+	<key>preferencesVersionID</key>
+	<integer>100</integer>
+	<key>isButtonCombinationOverrideDisabled</key>
+	<false/>
+	<key>rootCornerRadius</key>
+	<integer>5</integer>
+	<key>areQuickActionsEnabled</key>
+	<true/>
+	<key>isLockScreenControlCentreGrabberEnabled</key>
+	<true/>
+</dict>
+</plist>

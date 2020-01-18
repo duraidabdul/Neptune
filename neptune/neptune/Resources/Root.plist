@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>items</key>
+	<array>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>Developer</string>
+			<key>footerText</key>
+			<string>I really hope you&apos;re enjoying Neptune! I&apos;ve put a ton of work into this tweak, and will keep improving it as long as possible. Any donation to support my work is truly appreciated! :)</string>
+		</dict>
+		<dict>
+			<key>label</key>
+			<string>Follow @duraidabdul</string>
+			<key>cell</key>
+			<string>PSButtonCell</string>
+			<key>action</key>
+			<string>launchTwitter:</string>
+			<key>icon</key>
+			<string>Twitter_Social_Icon_Circle_Color.png</string>
+		</dict>
+		<dict>
+			<key>label</key>
+			<string>Tip the Developer</string>
+			<key>cell</key>
+			<string>PSButtonCell</string>
+			<key>action</key>
+			<string>launchPayPal:</string>
+			<key>icon</key>
+			<string>Heart.png</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>footerText</key>
+			<string>Enable the gestural interface seen on the iPhone X and above.</string>
+		</dict>
+		<dict>
+			<key>icon</key>
+			<string>switcher.png</string>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>defaults</key>
+			<string>com.duraidabdul.neptune</string>
+			<key>key</key>
+			<string>isFluidInterfaceEnabled</string>
+			<key>label</key>
+			<string>Enable Fluid Interface</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>iOS 12.2 and 12.3 Design Changes</string>
+			<key>footerText</key>
+			<string>Enable redesigned card info in the Wallet app.</string>
+		</dict>
+		<dict>
+			<key>icon</key>
+			<string>news.png</string>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>defaults</key>
+			<string>com.duraidabdul.neptune</string>
+			<key>key</key>
+			<string>isNewsIconEnabled</string>
+			<key>label</key>
+			<string>Apple News Icon</string>
+		</dict>
+		<dict>
+			<key>icon</key>
+			<string>tv.png</string>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>defaults</key>
+			<string>com.duraidabdul.neptune</string>
+			<key>key</key>
+			<string>isTVIconEnabled</string>
+			<key>label</key>
+			<string>Apple TV Icon</string>
+		</dict>
+		<dict>
+			<key>icon</key>
+			<string>wallet.png</string>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>defaults</key>
+			<string>com.duraidabdul.neptune</string>
+			<key>key</key>
+			<string>isWalletEnabled</string>
+			<key>label</key>
+			<string>Wallet (beta)</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>footerText</key>
+			<string>When this is enabled, videos can continue playing in an overlay, even when you leave the app. This feature may cause issues with the Spotify application.</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>defaults</key>
+			<string>com.duraidabdul.neptune</string>
+			<key>key</key>
+			<string>isPIPEnabled</string>
+			<key>label</key>
+			<string>Picture in Picture (beta)</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>Display Corner Radius</string>
+			<key>footerText</key>
+			<string>Adjust the display corner radius. Default: 5.0</string>
+		</dict>
+		<dict>
+			<key>PostNotification</key>
+			<string>com.duraidabdul.neptune/requestPreferenceUpdate</string>
+			<key>cell</key>
+			<string>PSSliderCell</string>
+			<key>showValue</key>
+			<true/>
+			<key>defaults</key>
+			<string>com.duraidabdul.neptune</string>
+			<key>key</key>
+			<string>rootCornerRadius</string>
+			<key>label</key>
+			<string>Display Within Apps</string>
+			<key>isSegmented</key>
+			<false/>
+			<key>min</key>
+			<string>0</string>
+			<key>max</key>
+			<string>10</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSLinkCell</string>
+			<key>label</key>
+			<string>Advanced</string>
+			<key>detail</key>
+			<string>NPTListController</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>footerText</key>
+			<string>A respring is required for most changes to take effect.</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSButtonCell</string>
+			<key>label</key>
+			<string>Restart SpringBoard</string>
+			<key>action</key>
+			<string>respring</string>
+			<key>isDestructive</key>
+			<string>YES</string>
+			<key>confirmation</key>
+			<dict>
+				<key>prompt</key>
+				<string>This will relaunch SpringBoard and close all running applications.</string>
+				<key>cancelTitle</key>
+				<string>Cancel</string>
+				<key>title</key>
+				<string>Restart Springboard</string>
+			</dict>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>footerText</key>
+			<string>© 2019 Duraid Abdul</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSTitleValueCell</string>
+			<key>get</key>
+			<string>valueForSpecifier:</string>
+			<key>label</key>
+			<string>Version</string>
+		</dict>
+		<dict>
+			<key>label</key>
+			<string>Source Code</string>
+			<key>cell</key>
+			<string>PSButtonCell</string>
+			<key>action</key>
+			<string>launchGitHub:</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>Acknowledgements</string>
+			<key>footerText</key>
+			<string>MidnightChips (@midnightchip) - Developer of HomeGesture</string>
+		</dict>
+	</array>
+	<key>title</key>
+	<string>Neptune</string>
+</dict>
+</plist>

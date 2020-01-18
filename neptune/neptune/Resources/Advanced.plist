@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>items</key>
+	<array>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>Status Bar</string>
+			<key>footerText</key>
+			<string>Adjust the appearance of the status bar.</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSLinkListCell</string>
+			<key>defaults</key>
+			<string>com.duraidabdul.neptune</string>
+			<key>detail</key>
+			<string>PSListItemsController</string>
+			<key>key</key>
+			<string>statusBarStyle</string>
+			<key>label</key>
+			<string>Style</string>
+			<key>validTitles</key>
+			<array>
+				<string>Modern (Recommended)</string>
+				<string>Modern (Large)</string>
+				<string>Modern (Large, All Apps)*</string>
+				<string>Original</string>
+			</array>
+			<key>validValues</key>
+			<array>
+				<integer>1</integer>
+				<integer>0</integer>
+				<string>3</string>
+				<integer>2</integer>
+			</array>
+			<key>staticTextMessage</key>
+			<string>Adjust the appearance of the status bar.
+
+* Enabling &quot;Modern (Large, All Apps)&quot; may cause issues with certain apps. This is not recommended.</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>Home Indicator</string>
+			<key>footerText</key>
+			<string>Display the home indicator within apps. When disabled, you can still use gestures to navigate the system. </string>
+		</dict>
+		<dict>
+			<key>PostNotification</key>
+			<string>com.duraidabdul.neptune/requestPreferenceUpdate</string>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>defaults</key>
+			<string>com.duraidabdul.neptune</string>
+			<key>key</key>
+			<string>isHomeIndicatorEnabled</string>
+			<key>label</key>
+			<string>Display Within Apps</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>Keyboard</string>
+			<key>footerText</key>
+			<string>Enable the tall keyboard in all apps. Disabling this will cause the spacebar to interfere with the home gesture.</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>defaults</key>
+			<string>com.duraidabdul.neptune</string>
+			<key>key</key>
+			<string>isTallKeyboardEnabled</string>
+			<key>label</key>
+			<string>Enable Bottom Bar</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>Hardware Buttons</string>
+			<key>footerText</key>
+			<string>Use new button combinations to:
+• Take screenshots (volume up + lock)
+• Access Siri (hold on lock)
+• Power off your device (hold volume down + lock)</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>defaults</key>
+			<string>com.duraidabdul.neptune</string>
+			<key>key</key>
+			<string>isButtonCombinationOverrideDisabled</string>
+			<key>label</key>
+			<string>New Combinations</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>Lock Screen</string>
+			<key>footerText</key>
+			<string>Display the Flashlight and Camera quick action buttons on the Lock Screen.</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>defaults</key>
+			<string>com.duraidabdul.neptune</string>
+			<key>default</key>
+			<true/>
+			<key>key</key>
+			<string>isLockScreenControlCentreGrabberEnabled</string>
+			<key>label</key>
+			<string>Control Centre Grabber</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>defaults</key>
+			<string>com.duraidabdul.neptune</string>
+			<key>key</key>
+			<string>areQuickActionsEnabled</string>
+			<key>default</key>
+			<true/>
+			<key>label</key>
+			<string>Quick Action Buttons</string>
+		</dict>
+	</array>
+	<key>title</key>
+	<string>Advanced</string>
+</dict>
+</plist>

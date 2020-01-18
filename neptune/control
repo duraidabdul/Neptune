@@ -1,0 +1,9 @@
+Package: com.duraidabdul.neptune
+Name: Neptune
+Depends: mobilesubstrate, firmware(>=12.0), preferenceloader
+Version: 1.3 beta 1
+Architecture: iphoneos-arm
+Description: Enable Apple's modern fluid gestural interface on all devices.
+Maintainer: Duraid Abdul
+Author: Duraid Abdul
+Section: Tweaks
