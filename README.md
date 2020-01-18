@@ -1,6 +1,9 @@
 # Neptune
 Fluid Springboard for iOS 12.
 
+![](https://github.com/duraidabdul/Neptune/blob/master/Previews.png?raw=true)
+
+
 **Features**:
 
 - Fluid app switcher.
@@ -22,4 +25,4 @@ Fluid Springboard for iOS 12.
 ###### Compatibility
 Requires iOS 12.0 or later. Made for iPhone.
 
-Feel free to follow me on Twitter @duraidabdul for updates! If you'd like to donate, here is a link: paypal.me/duraidabdul. Thank you :)
+Feel free to follow me on Twitter @duraidabdul for updates! You can donate to support my future projects [here](paypal.me/duraidabdul). Thank you :)
