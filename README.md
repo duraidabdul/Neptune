@@ -1,7 +1,7 @@
 ![](https://github.com/duraidabdul/Neptune/blob/master/Previews.png?raw=true)
 
 
-**Features**:
+### Features
 
 Neptune brings features seen on newer iPhones to older devices. Neptune also refinines button animations, glyphs and corner radius rendering throughout the system.
 
@@ -22,7 +22,7 @@ Neptune brings features seen on newer iPhones to older devices. Neptune also ref
 **Acknowledgments**:
 Neptune uses some code written for [HomeGesture](https://github.com/midnightchip/midnightchip.github.io), developed by the incredibly talented MidnightChips!
 
-###### Compatibility
+### Compatibility
 Requires iOS 12.0 or later. Made for iPhone.
 
-Feel free to follow me on Twitter @duraidabdul for updates! You can donate to support my future projects [here](paypal.me/duraidabdul). Thank you :)
+Feel free to follow me on Twitter [@duraidabdul](https://twitter.com/duraidabdul) for updates! You can donate to support my future projects [here](paypal.me/duraidabdul). Thank you :)
