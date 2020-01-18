@@ -20,7 +20,7 @@ Neptune brings features seen on newer iPhones to older devices. Neptune also ref
 - iOS 12.2 News icon.
 
 **Acknowledgments**:
-Neptune uses some code written for [HomeGesture](https://github.com/midnightchip/midnightchip.github.io), developed by the incredibly talented MidnightChips!
+Neptune uses some code written for [HomeGesture](https://github.com/midnightchip/midnightchip.github.io), developed by the incredibly talented [MidnightChips](https://twitter.com/MidnightChip)!
 
 ### Compatibility
 Requires iOS 12.0 or later. Made for iPhone.
