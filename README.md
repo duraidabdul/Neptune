@@ -1,12 +1,11 @@
-# Neptune
-Fluid SpringBoard for iOS 12.
-
 ![](https://github.com/duraidabdul/Neptune/blob/master/Previews.png?raw=true)
 
 
 **Features**:
 
-- Fluid app switcher.
+Neptune brings features seen on newer iPhones to older devices. Neptune also refinines button animations, glyphs and corner radius rendering throughout the system.
+
+- Fluid app switcher as seen on new iPhones.
 
 - Lock screen quick toggles.
 
@@ -20,7 +19,8 @@ Fluid SpringBoard for iOS 12.
 
 - iOS 12.2 News icon.
 
-**Acknowledgments**: This is a fork of [HomeGesture](https://github.com/midnightchip/midnightchip.github.io), developed by the incredibly talented MidnightChips!
+**Acknowledgments**:
+Neptune uses some code written for [HomeGesture](https://github.com/midnightchip/midnightchip.github.io), developed by the incredibly talented MidnightChips!
 
 ###### Compatibility
 Requires iOS 12.0 or later. Made for iPhone.
